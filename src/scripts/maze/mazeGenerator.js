@@ -80,10 +80,10 @@ export const MazeGenerator = {
         // y*(this.mazeConfig.pathWidth+wall)+offset)
 
         // this._growTree(map, x, y, cellSelectionMethod);
-        this._growTree(ctx, map, x, y, "random")
+        this._growTree(ctx, map, x, y, "newest")
 
     },
-    _growTree: function (ctx, map, startingX, startingY, cellSelectionMethod='random') {
+    _growTree: function (ctx, map, startingX, startingY, cellSelectionMethod) {
         let activeCells = [[startingX, startingY]],
             index,
             x,
@@ -102,6 +102,7 @@ export const MazeGenerator = {
                  break; 
             }
             index = this._nextIndex(activeCells.length, cellSelectionMethod);
+            console.log("index!", index);
             x = activeCells[index][0];
             y = activeCells[index][1];
             console.log("next cell has been pulled (canvas coords below) x:", x, "y", y)
@@ -183,13 +184,13 @@ export const MazeGenerator = {
                 break;
             // Items being pushed to back of array, so newest is end of array   
             case "newest":
-                return -1;
+                return length - 1;
                 break;
             case "oldest":
                 return 0;
                 break;
             case "random-newest":
-                return Math.random() < 0.5 ? this._getRandomIndex(0, length - 1) : 0;
+                return Math.random() < 0.5 ? this._getRandomIndex(0, length - 1) : length - 1;
                 break;
         }
     },
