@@ -1,0 +1,12 @@
+.sprite {
+    position: absolute;
+    &#sorcerer {
+      -webkit-transform: scale(-1.25, 1.25);
+      transform: scale(-1.25, 1.25);
+      top: 18.25%;
+      right: 0;
+    }
+    &#ship {
+      top: 40%
+    }
+  }

@@ -1,0 +1,30 @@
+#intro {
+    background: url('../images/intro-bg.jpg') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    width: 100vw;
+    height: 100vw;
+    position: absolute;
+    z-index: 20;
+    #click-text {
+        position: absolute;
+        width: 25%;
+        top: 50%;
+        left: 50%;
+        -webkit-transform: translateX(-50%);
+        transform: translateX(-50%);
+    }
+      
+    #hdr {
+        width: 60%;
+        margin: 5% auto 0 auto;
+    }
+      
+    #sub-hdr {
+        width: 40%;
+        margin: 0 auto;
+    }
+}
+
