@@ -1,10 +1,11 @@
 // Start with a random cell as current cell
 // Add cell to active array
-// Randomly pick an unvisited neighbor, add to active array (at the back), update as new current cell
+// Pick an unvisited neighbor, add to active array (at the back), update as new current cell
 // If current cell has no UNVISITED neighbors, remove it from the active array and cell directly following it
 // becomes new active cell
-// Do this until all active cells empty
+// Do this with specified cellSelectionMethod until all active cells empty
 
+// SAMPLE MAZE CONFIG
 // const mazeConfig = {
 //     pathWidth: 10, // Width of Maze Paths
 //     wall: 2, // Wall Width (between paths)
@@ -50,6 +51,7 @@ export const MazeGenerator = {
 
         console.log("cellSelectionMethod", cellSelectionMethod);
         this._growTree(ctx, map, x, y, cellSelectionMethod, mazeConfig)
+        return this.map;
 
     },
     _growTree: function (ctx, map, startingX, startingY, cellSelectionMethod, mazeConfig) {
@@ -93,7 +95,7 @@ export const MazeGenerator = {
     // Checks if there is unvisited neighbor cell given a coordinate and a map
     // randomly checks each direction, returning the first coordinate group of a valid neighbor cell
     // if not validneighbor cell is found, false is returned
-    _validNeighborCell: function(map, x, y) {
+    _validNeighborCell: function (map, x, y) {
         this.DIRECTIONS = this._shuffle(this.DIRECTIONS);
 
         for (let i = 0; i < this.DIRECTIONS.length; i++) {
@@ -117,7 +119,7 @@ export const MazeGenerator = {
           }
           return false;
       },
-    _nextIndex: function(length, cellSelectionMethod) {
+    _nextIndex: function (length, cellSelectionMethod) {
         switch (cellSelectionMethod) {
             case "random":
                 return this._getRandomIndex(0, length - 1);
@@ -162,7 +164,7 @@ export const MazeGenerator = {
     },
 // getRandomIntInclusive()
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
-    _getRandomIndex(min, max) {
+    _getRandomIndex: function (min, max) {
         min = Math.ceil(min);
         max = Math.floor(max);
         return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive 
