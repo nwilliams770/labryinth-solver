@@ -26,7 +26,10 @@ export const MazeGenerator = {
     offset: null,
 
     initialize: function (ctx, cellSelectionMethod, mazeConfig) {
+        console.log("MAZE CONFIG", mazeConfig);
         this.offset = mazeConfig.pathWidth/2 + mazeConfig.outerWall;
+        this.ctx = ctx;
+        this.mazeConfig = mazeConfig;
 
         // Setup canvas
         ctx.fillStyle = mazeConfig.wallColor;
@@ -40,19 +43,24 @@ export const MazeGenerator = {
         let x = this._getRandomIndex(0, mazeConfig.width - 1), 
             y = this._getRandomIndex(0, mazeConfig.height - 1);
 
-        let map = [];
-
-        for (let i = 0; i < mazeConfig.height * 2; i++) { // We multiply by two so that our map isn't consisting of just paths, remember our width is how many paths we want
-            map[i] = [];
-            for (let j = 0; j < mazeConfig.width * 2; j++) {
-                map[i][j] = 0;
-            }
-        }
+        let map = this._createMap(mazeConfig.width, mazeConfig.height);
 
         console.log("cellSelectionMethod", cellSelectionMethod);
         this._growTree(ctx, map, x, y, cellSelectionMethod, mazeConfig)
         return this.map;
 
+    },
+    // Redraws the maze under the assumption initialize has already been called e.g. we have a mazeConfig & ctx
+    redrawMaze: function (newCellSelectionMethod) {
+        // reset canvas
+        this.ctx.fillRect(0,0,this.mazeConfig.canvasWidth,this.mazeConfig.canvasHeight);
+        // starting X,Y 
+        let x = this._getRandomIndex(0, this.mazeConfig.width - 1), 
+            y = this._getRandomIndex(0, this.mazeConfig.height - 1),
+            map = this._createMap(this.mazeConfig.width, this.mazeConfig.height);
+        this._growTree(this.ctx, map, x, y, newCellSelectionMethod, this.mazeConfig);
+        return this.map;
+        
     },
     _growTree: function (ctx, map, startingX, startingY, cellSelectionMethod, mazeConfig) {
         let activeCells = [[startingX, startingY]],
@@ -69,6 +77,8 @@ export const MazeGenerator = {
             x = activeCells[index][0];
             y = activeCells[index][1];
             ctx.moveTo(x * (mazeConfig.pathWidth + mazeConfig.wall) + this.offset, y * (mazeConfig.pathWidth + mazeConfig.wall) + this.offset)
+
+
 
             validDirection = this._validNeighborCell(map, x, y);
             if (validDirection) {
@@ -91,6 +101,16 @@ export const MazeGenerator = {
         }
         this.map = map;
 
+    },
+    _createMap: function (width, height) {
+        let map = [];
+        for (let i = 0; i < height * 2; i++) { // We multiply by two so that our map isn't consisting of just paths, remember our width is how many paths we want
+            map[i] = [];
+            for (let j = 0; j < width * 2; j++) {
+                map[i][j] = 0;
+            }
+        }
+        return map;
     },
     // Checks if there is unvisited neighbor cell given a coordinate and a map
     // randomly checks each direction, returning the first coordinate group of a valid neighbor cell
@@ -130,7 +150,7 @@ export const MazeGenerator = {
             case "oldest":
                 return 0;
                 break;
-            case "random-newest":
+            case "newest-random":
                 return Math.random() < 0.5 ? this._getRandomIndex(0, length - 1) : length - 1;
                 break;
         }

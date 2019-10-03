@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import AppDispatcher from '../dispatcher/app-dispatcher';
-import MazeGenerator from '../scripts/maze/mazeGenerator';
+import MazeGenerator from '../scripts/mazeGenerator';
 
 const mazeConfig = {
     pathWidth: 20,
@@ -15,7 +15,9 @@ mazeConfig.canvasWidth = mazeConfig.outerWall * 2 + (mazeConfig.width * (mazeCon
 mazeConfig.canvasHeight = mazeConfig.outerWall * 2 + (mazeConfig.height * (mazeConfig.pathWidth + mazeConfig.wall)) - mazeConfig.wall;
 
 let maze = [],
-    defaultCellSelectionMethod = 'newest';
+    defaultCellSelectionMethod = 'newest',
+    ctx = null;
+    // walkerCtx = null;
 
 const MazeStore = Object.assign({}, EventEmitter.prototype, {
     emitChange: () => {
@@ -30,7 +32,10 @@ const MazeStore = Object.assign({}, EventEmitter.prototype, {
         this.removeListener('change', callback);
     },
 
-    generateMaze: (ctx) => {
+    // Probaby update this to generateInitialMaze
+    generateMaze: (context) => {
+        ctx = context;
+        // this is where we could emit our sprite event
         maze = MazeGenerator.initialize(ctx, defaultCellSelectionMethod, mazeConfig);
         return maze;
     },
@@ -49,9 +54,12 @@ const MazeStore = Object.assign({}, EventEmitter.prototype, {
 
 MazeStore.dispatchToken = AppDispatcher.register(function (action) {
     switch (action.actionType) {
-        // case "PLACE_TREES":
-        //     BoardStore._placeTrees(action.data[0])
-        //     break;
+        case "UPDATE_MAZE_GENERATION_CONFIG":
+                console.log("UPDATING MAZE GENERATION CONFIGURATION");
+                console.log("ctx", ctx, "action.data", action.data, "mazeConfig", mazeConfig);
+                // this is where we could emit our sprite event
+                MazeGenerator.redrawMaze(action.data); // only need to pass new cellSelectionMethod as our generator has already been initializd with the other info
+                break;
         default:
     }
 });
