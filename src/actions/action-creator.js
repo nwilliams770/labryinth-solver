@@ -1,12 +1,12 @@
 
 import AppDispatcher from '../dispatcher/app-dispatcher';
 
-export const UPDATE_MAZE_GENERATION_CONFIG = "UPDATE_MAZE_GENERATION_CONFIG";
+export const UPDATE_MAZE_GENERATION_ALGO = "UPDATE_MAZE_GENERATION_ALGO";
 
 
-export const updateMazeGenerationConfig = (configuration) => {
+export const updateMazeGenerationConfiguration = (configuration) => {
     AppDispatcher.dispatch({
-        type: UPDATE_MAZE_GENERATION_CONFIG,
+        actionType: UPDATE_MAZE_GENERATION_ALGO,
         data: configuration
-    })
-}
+    });
+};
