@@ -1,0 +1,12 @@
+#selector-modules {
+    position: absolute;
+    top: 50px;
+    left: 500px;
+    .selector {
+        width: 300px;
+        &:first-of-type {
+            margin-bottom: 10px;
+        }
+    }
+}
+

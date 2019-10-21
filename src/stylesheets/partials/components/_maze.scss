@@ -1,0 +1,13 @@
+#maze {
+    position: absolute;
+    top: 160px;
+    left: 200px;
+    .wrapper {
+        position: relative;
+        #path-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    }
+}
