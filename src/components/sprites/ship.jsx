@@ -35,7 +35,7 @@ export const Ship = (props) => {
     }, []);
 
     return (
-        <div id="ship" class="sprite" style={{left: xPos + 'px'}}>
+        <div id="ship" className="sprite" style={{left: xPos + 'px'}}>
             <SpriteAnimator
                 ref={spriteEl}
                 width={100}
