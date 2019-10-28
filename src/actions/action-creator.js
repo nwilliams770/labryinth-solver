@@ -1,12 +1,9 @@
 
 import AppDispatcher from '../dispatcher/app-dispatcher';
 
-export const UPDATE_MAZE_GENERATION_ALGO = "UPDATE_MAZE_GENERATION_ALGO";
-
-
-export const updateMazeGenerationConfiguration = (configuration) => {
+export const updateCellSelectionMethod = (data) => {
     AppDispatcher.dispatch({
-        actionType: UPDATE_MAZE_GENERATION_ALGO,
-        data: configuration
+        actionType: "UPDATE_CELL_SELECTION_METHOD",
+        data: data
     });
 };
