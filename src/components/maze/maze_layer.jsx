@@ -20,8 +20,8 @@ const MazeLayer = ({ mazeConfig }) => {
         // canvas.height = height * ratio;
         // canvas.style.width = `${width}px`;
         // canvas.style.height = `${height}px`;
-
-        MazeStore.generateMaze(ctx);
+        console.log("maze_layer is about to generate initial maze");
+        MazeStore.generateInitialMaze(ctx);
     }, [])
 
     return (

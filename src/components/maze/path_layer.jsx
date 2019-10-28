@@ -1,12 +1,21 @@
 import React, { useRef, useEffect } from 'react';
-import WalkerManager from '../../scripts/walker';
+import WalkerManager from '../../walker/walker';
+
 
 const PathLayer = ({ mazeConfig }) => {
     let canvasRef = useRef(null);
 
     useEffect(() => {
+        console.log("path_layer.jsx component updating...");
+        console.log(mazeConfig.test);
+        
+    }, [mazeConfig])
+
+    useEffect(() => {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
+        console.log("initial mazeConfig in path_layer")
+        console.log(mazeConfig.test)
 
 
         // let ratio = getPixelRatio(ctx),
@@ -21,6 +30,7 @@ const PathLayer = ({ mazeConfig }) => {
         // canvas.style.width = `${width}px`;
         // canvas.style.height = `${height}px`;
         WalkerManager.initialize(ctx, mazeConfig);
+
     }, []);
 
     return (
