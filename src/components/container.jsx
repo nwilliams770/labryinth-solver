@@ -1,4 +1,8 @@
+import React, { useState } from 'react';
 import '../stylesheets/app.scss';
+import App from './app';
+import Intro from './intro';
+import CSSTransitionGroup from 'react-addons-css-transition-group';
 
 const Navbar = () => {
     return (
@@ -8,10 +12,14 @@ const Navbar = () => {
     )
 }
 
-function Container () {
+const Container = () => {
+    const [showIntro, hideIntro] = useState(true);
+    
+    let intro = !showIntro ? "" : <div id="intro-wrapper" onClick={() => hideIntro(false)}><Intro /></div>;
     return (
-        <div id="app">
-            <h1>Hello world, I'm your app</h1>
+        <div id="container">
+            {/* {intro} */}
+            <App />
         </div>
         
     )
