@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Select from 'react-select';
-import { updateMazeGenerationConfiguration } from '../../actions/action-creator';
+// import * as ActionCreator from '../../actions/action-creator';
 
-const SelectorModule = ({ options, type }) => {
+const SelectorModule = ({ config }) => {
     // const [selected, updateSelection] = useState("newest");
 
     // console.log("selected", selected);
@@ -12,7 +12,9 @@ const SelectorModule = ({ options, type }) => {
         // console.log("input from seletor_module", input);
 
         // We can add a ternary operator here to do a different action based on the type of selector;
-        updateMazeGenerationConfiguration(input.value); 
+        // ActionCreator.updateCellSelectionMethod(input.value); 
+        // console.log("ActionCreator return value", test);
+        // ActionCreator.changeCellSelectionMethod(input.value); 
     }
     // useEffect(() => {
     //     // function handleSelection(input) {
@@ -26,10 +28,13 @@ const SelectorModule = ({ options, type }) => {
     return (
         <div className="selector">
             <Select
-                className={type}
-                options={options}
-                defaultValue={options[0]}
-                onChange={ (input) => handleChange(input)}
+                className={config.type}
+                options={config.options}
+                defaultValue={config.defaultValue ? config.options[0] : ""}
+                placeholder={config.placeholder ? config.placeholder : ""}
+                onChange={(input) => config.handleChange(input)}
+                classNamePrefix={config.type + "-selector"}
+                value={config.selection}
             />
         </div>
     );
