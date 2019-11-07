@@ -3,7 +3,6 @@ import Sorcerer from './sprites/sorcerer';
 import Maze from './maze/maze';
 import SelectorModules from './selector/selector_modules';
 
-
 const App = () => {
     return (
         <div id="app">
@@ -11,8 +10,7 @@ const App = () => {
             <Sorcerer />
             <Maze />
         </div>
-        
-    )
-}
+    );
+};
 
 export default App;
