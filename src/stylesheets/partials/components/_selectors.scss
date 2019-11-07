@@ -3,9 +3,21 @@
     top: 50px;
     left: 500px;
     .selector {
-        width: 300px;
+        width: 250px;
         &:first-of-type {
             margin-bottom: 10px;
+        }
+        .selector__control {
+            border-radius: 0;
+            border: 1px solid white;
+            background-color: black;
+            .selector__value-container {
+                font-family: $selectorFontStack;
+                .selector__placeholder {
+                    color: white;
+                }
+            }
+
         }
     }
 }

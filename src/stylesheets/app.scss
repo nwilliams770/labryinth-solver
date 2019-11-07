@@ -1,11 +1,12 @@
 // Reset
 @import 'base/reset.scss';
 
-// Variables
-@import 'partials/variables';
-
 // Base
 @import 'base/animations.scss';
+@import 'base/fonts.scss';
+
+// Variables
+@import 'partials/variables';
 
 // Components
 @import 'partials/components/intro.scss';
@@ -32,11 +33,13 @@ body > div {
 #app {
   background: url('../images/main-bg.jpg') no-repeat center top fixed;
   width: 1000px;
-  height: calc(#{$main-bg-ratio} * 1000px);
+  // height: calc(#{$main-bg-ratio} * 1000px);
+  height: 595px;
   background-size: auto;
   position: relative;
   margin: 0 auto;
   margin-top: 30px;
+  box-shadow: 0 37.125px 70px -12.125px rgba(0,0,0,0.3);
 }
 
 #container {
