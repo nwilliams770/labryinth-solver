@@ -26,26 +26,24 @@ export const MazeGenerator = {
     offset: null,
 
     initialize: function (ctx, cellSelectionMethod, mazeConfig) {
-        console.log("MAZE CONFIG", mazeConfig);
-        this.offset = mazeConfig.pathWidth/2 + mazeConfig.outerWall;
         this.ctx = ctx;
         this.mazeConfig = mazeConfig;
 
+
         // Setup canvas
-        ctx.fillStyle = mazeConfig.wallColor;
-        ctx.fillRect(0,0,mazeConfig.canvasWidth,mazeConfig.canvasHeight);
-        ctx.strokeStyle = mazeConfig.pathColor;
-        ctx.lineCap = 'square';
-        ctx.lineWidth = mazeConfig.pathWidth;
-        ctx.beginPath();
+        this.ctx.fillStyle = mazeConfig.wallColor;
+        this.ctx.fillRect(0,0,mazeConfig.canvasWidth,mazeConfig.canvasHeight);
+        this.ctx.strokeStyle = mazeConfig.pathColor;
+        this.ctx.lineCap = 'square';
+        this.ctx.lineWidth = mazeConfig.pathWidth;
+        this.ctx.beginPath();
 
         // starting X,Y 
         let x = this._getRandomIndex(0, mazeConfig.width - 1), 
             y = this._getRandomIndex(0, mazeConfig.height - 1);
 
         let map = this._createMap(mazeConfig.width, mazeConfig.height);
-
-        console.log("cellSelectionMethod", cellSelectionMethod);
+        
         this._growTree(ctx, map, x, y, cellSelectionMethod, mazeConfig)
         return this.map;
 
@@ -69,15 +67,13 @@ export const MazeGenerator = {
             y,
             validDirection;
 
-        // Minus 1 to account for 0-indexing, moveTo first location
         map[startingY * 2][startingX * 2] = 1;
 
         while (activeCells.length > 0) {
             index = this._nextIndex(activeCells.length, cellSelectionMethod);
             x = activeCells[index][0];
             y = activeCells[index][1];
-            ctx.moveTo(x * (mazeConfig.pathWidth + mazeConfig.wall) + this.offset, y * (mazeConfig.pathWidth + mazeConfig.wall) + this.offset)
-
+            ctx.moveTo(x * (mazeConfig.pathWidth + mazeConfig.wall) + mazeConfig.offset, y * (mazeConfig.pathWidth + mazeConfig.wall) + mazeConfig.offset);
 
 
             validDirection = this._validNeighborCell(map, x, y);
@@ -91,14 +87,20 @@ export const MazeGenerator = {
                 
                 // Draw the line and move pointer to new cell
                 this._drawTo(ctx, 
-                            (this.DX[validDirection] + x) * (mazeConfig.pathWidth + mazeConfig.wall) + this.offset, 
-                            (this.DY[validDirection] + y) * (mazeConfig.pathWidth + mazeConfig.wall) + this.offset)
+                            (this.DX[validDirection] + x) * (mazeConfig.pathWidth + mazeConfig.wall) + mazeConfig.offset, 
+                            (this.DY[validDirection] + y) * (mazeConfig.pathWidth + mazeConfig.wall) + mazeConfig.offset)
             } else {
               // remove the cell
-              let removed = activeCells.splice(index, 1);
+              activeCells.splice(index, 1);
+            };
+        };
 
-            }
-        }
+        // Draw entrance/exit
+        this.ctx.fillStyle = 'yellow';
+        this.ctx.fillRect(mazeConfig.outerWall,0,mazeConfig.pathWidth,mazeConfig.outerWall);
+        this.ctx.fillRect(mazeConfig.canvasWidth - mazeConfig.outerWall - mazeConfig.pathWidth,mazeConfig.canvasHeight - mazeConfig.outerWall,mazeConfig.pathWidth,mazeConfig.outerWall);
+        this.ctx.fillStyle = mazeConfig.wallColor; // Revert fillStyle for future redraws 
+
         this.map = map;
 
     },
@@ -124,10 +126,11 @@ export const MazeGenerator = {
               ny = y + this.DY[dir];
       
             // If we are not out of bounds and the cell has not yet been visited
-            if (map[ny * 2] != undefined &&
-              map[ny * 2][nx * 2]===0) {
+            if (map[ny * 2] !== undefined &&
+                map[ny * 2][nx * 2]===0) 
+            {
                 return this.DIRECTIONS[i];
-              }
+            };
               // if (nx >= 0 &&
               //     ny >= 0 &&
               //     map[ny * 2] !== undefined &&
@@ -136,29 +139,26 @@ export const MazeGenerator = {
               //         return [nx, ny];
               //   }
       
-          }
+        };
           return false;
-      },
+    },
     _nextIndex: function (length, cellSelectionMethod) {
         switch (cellSelectionMethod) {
             case "random":
                 return this._getRandomIndex(0, length - 1);
-                break;
             case "newest":
                 return length - 1;
-                break;
             case "oldest":
                 return 0;
-                break;
             case "newest-random":
                 return Math.random() < 0.5 ? this._getRandomIndex(0, length - 1) : length - 1;
+            default:
                 break;
         }
     },
     _drawTo: function (ctx, x, y) {
         ctx.lineTo(x, y)
         ctx.stroke();
-        ctx.closePath();
         ctx.beginPath();
 
     },

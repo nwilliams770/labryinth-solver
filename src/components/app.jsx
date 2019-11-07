@@ -1,6 +1,6 @@
 import React from 'react';
 import Sorcerer from './sprites/sorcerer';
-import Maze from './maze/maze';
+import Maze from './maze';
 import SelectorModules from './selector/selector_modules';
 
 const App = () => {
