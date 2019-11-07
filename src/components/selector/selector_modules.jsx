@@ -30,7 +30,7 @@ const SelectorModules = () => {
             {value:"tremaux", label: "Trémaux (DFS)"}
         ],
         type: "algo",
-        placeholder: "Select a solving method",
+        placeholder: "Algorithm",
         defaultValue: false,
         handleChange: (input) => {
             updateAlgoSelection(input);
@@ -38,8 +38,6 @@ const SelectorModules = () => {
         },
         selection: algoSelection
     };
-
-    console.log("mazeSelection", mazeSelection)
 
     return (
         <div id="selector-modules">
@@ -53,7 +51,7 @@ const SelectorModules = () => {
             />
         </div>
 
-    )
-}
+    );
+};
 
 export default SelectorModules;
