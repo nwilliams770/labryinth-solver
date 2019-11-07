@@ -7,3 +7,10 @@ export const updateCellSelectionMethod = (data) => {
         data: data
     });
 };
+
+export const runSolverScript = (scriptName) => {
+    AppDispatcher.dispatch({
+        actionType: "RUN_SOLVER_SCRIPT",
+        scriptName: scriptName
+    });
+};
