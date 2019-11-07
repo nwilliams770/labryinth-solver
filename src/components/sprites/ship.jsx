@@ -4,9 +4,6 @@ import sprite from '../../images/ship-sprite.png';
 
 // TO DO:
 // - Update hard-coded ship size once styling is confirmed
-// - Move component styling to it's own partial
-
-
 
 export const Ship = (props) => {
     const spriteEl = useRef(null);
@@ -21,9 +18,8 @@ export const Ship = (props) => {
 
     // useEffect accepts a function as a param, if you pass it an empty array as well,
     // we will only call the function ONCE!
-
     useEffect(() => {
-        const shipWidth = 70; // Our sprite is 100 x 100px but surrounded by a lot of white space, just estimating the actual size of the ship itself
+        // const shipWidth = 70; // Our sprite is 100 x 100px but surrounded by a lot of white space, just estimating the actual size of the ship itself
         const interval = setInterval(() => { 
             if (xPosRef.current < window.innerWidth ) {
                 updatePos(xPosRef.current + 1)
@@ -51,7 +47,7 @@ export const Ship = (props) => {
                 wrapAfter={1}
             />
     </div>
-    )
-}
+    );
+};
 
 export default Ship;

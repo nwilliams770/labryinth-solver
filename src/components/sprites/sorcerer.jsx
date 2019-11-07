@@ -16,7 +16,7 @@ const Sorcerer = (props) => {
         setTimeout(() => {
             setAnimate(false);
         }, 1500);
-    });
+    }, []);
 
     useEffect(() => {
         MazeStore.addSpriteEventListener('sorcerer', handleSpriteEvent);
@@ -43,7 +43,7 @@ const Sorcerer = (props) => {
                 reset={!shouldAnimate}
             />
     </div>
-    )
-}
+    );
+};
 
 export default Sorcerer;
