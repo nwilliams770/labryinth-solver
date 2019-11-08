@@ -5,7 +5,7 @@ import sprite from '../../images/ship-sprite.png';
 // TO DO:
 // - Update hard-coded ship size once styling is confirmed
 
-export const Ship = (props) => {
+const Ship = (props) => {
     const spriteEl = useRef(null);
     const [xPos, updatePos] = useState(-50);
     const xPosRef = useRef(xPos);
