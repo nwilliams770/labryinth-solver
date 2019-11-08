@@ -1,12 +1,10 @@
 // Reset
 @import 'base/reset.scss';
 
-// Base
-@import 'base/animations.scss';
+// Base / Variables
 @import 'base/fonts.scss';
-
-// Variables
 @import 'partials/variables';
+@import 'base/animations.scss';
 
 // Components
 @import 'partials/components/intro.scss';

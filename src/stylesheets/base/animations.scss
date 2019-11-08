@@ -1,27 +1,38 @@
 // https://stackoverflow.com/questions/23985018/simple-css-animation-loop-fading-in-out-loading-text
 @keyframes flickerAnimation {
-    0%   { opacity:1; }
-    50%  { opacity:0; }
-    100% { opacity:1; }
-  }
-  @-o-keyframes flickerAnimation{
-    0%   { opacity:1; }
-    50%  { opacity:0; }
-    100% { opacity:1; }
-  }
-  @-moz-keyframes flickerAnimation{
-    0%   { opacity:1; }
-    50%  { opacity:0; }
-    100% { opacity:1; }
-  }
+  0%   { opacity:1; }
+  50%  { opacity:0; }
+  100% { opacity:1; }
+}
+@-o-keyframes flickerAnimation{
+  0%   { opacity:1; }
+  50%  { opacity:0; }
+  100% { opacity:1; }
+}
+@-moz-keyframes flickerAnimation{
+  0%   { opacity:1; }
+  50%  { opacity:0; }
+  100% { opacity:1; }
+}
   @-webkit-keyframes flickerAnimation{
-    0%   { opacity:1; }
-    50%  { opacity:0; }
-    100% { opacity:1; }
-  }
-  .animate-flicker {
-     -webkit-animation: flickerAnimation 3s infinite;
-     -moz-animation: flickerAnimation 3s infinite;
-     -o-animation: flickerAnimation 3s infinite;
-      animation: flickerAnimation 3s infinite;
-  }
+  0%   { opacity:1; }
+  50%  { opacity:0; }
+  100% { opacity:1; }
+}
+
+.animate-flicker {
+  -webkit-animation: flickerAnimation 3s infinite;
+  -moz-animation: flickerAnimation 3s infinite;
+  -o-animation: flickerAnimation 3s infinite;
+  animation: flickerAnimation 3s infinite;
+}
+
+@keyframes pacingAnimation {
+  0% { transform: translateX(0px)  }
+  20% { transform: translateX(120px) }
+  30% { transform: translateX(120px) }
+  50% { transform: translateX(70px), scaleX(-1)}
+
+  80% { transform: translateX(-200px)}
+  100% { transform: translateX(0px)}
+}
