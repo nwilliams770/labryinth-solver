@@ -50,11 +50,6 @@ const dfs = {
     // https://stackoverflow.com/questions/7348618/html5-canvas-clipping-by-color
 
     solve: function () {
-        let prevY = 0,
-            prevX = 0,
-            currentX = 0,
-            currentY = 0;
-
         this.walker.removeColor([201,64,133]);
         // for (let y = 0; y < this.walker.maze.length; y++) {
         //     for (let x = 0; x < this.walker.maze.length; x++) {
