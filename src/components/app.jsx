@@ -9,7 +9,7 @@ const App = () => {
     return (
         <div id="app">
             <SelectorModules />
-            {/* <Alaska /> */}
+            <Alaska />
             <Sorcerer />
             <Maze />
         </div>

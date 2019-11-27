@@ -3,15 +3,14 @@ import sprite from '../../images/alaska.png';
 import MazeStore from '../../stores/maze-store';
 
 
+function getRandomArbitraryExlusive(min, max, exclusion) {
+    let num = Math.floor(Math.random() * (max - min) + min);
+ 
 
-// What is this going to do?
-// Alaska walks every couple seconds, paces | CSS Keyframe animation?
-// Speech bubble appears and disappears with new text
-
-// On action MAZE SOLVED
-// victory speech, pacing stops
-function getRandomArbitrary(min, max) {
-    return Math.floor(Math.random() * (max - min) + min);
+    while (num === exclusion) {
+        num = Math.floor(Math.random() * (max - min) + min);
+    };
+    return num;
 }
 
 const speeches = [
@@ -22,181 +21,283 @@ const speeches = [
     "I know that Anus-thing is possible, but will I EVER get out of here?",
     "I don't even know what a warp drive is...",
     "Escaped at last! Time to accost this Maze Wizard and bring his bodacious treasures back to my people!"
-]
+];
+
+
 
 const Alaska = () => {
-    const [xPos, updatePos] = useState(300);
-    const [facingRight, updateFacingRight] = useState(true);
-    const [hidden, hideSpeech] = useState(true);
-    const [currentSpeech, updateSpeech] = useState(speeches[1]);
+    const [xPos, updateXPos] = useState(300);
+    const [alaskaDirection, updateDirection] = useState("right");
+    const [speechVisible, toggleSpeech] = useState(false);
+    const [currentSpeech, changeSpeech] = useState(speeches[0]);
 
-    const currentSpeechRef = useRef(currentSpeech);
-    const facingRightRef = useRef(facingRight);
-    const xPosRef = useRef(xPos);
-    const hiddenRef = useRef(hidden);
-    facingRightRef.current = facingRight;
-    xPosRef.current = xPos;
-    currentSpeechRef.current = currentSpeech;
-    hiddenRef.current = hidden;
+    const [timeoutId, updateTimeoutId] = useState(0);
+    const timeoutIdRef = useRef(timeoutId);
+    timeoutIdRef.current = timeoutId;
 
-    const handleEvent = (paceId) => {
-        clearInterval(paceId);
+    const [pause, pauseAnimation] = useState(false);
+    const pauseRef = useRef(pause);
+    pauseRef.current = pause;
+
+    const [leftoverAnimationTime, updateLeftoverAnimationTime] = useState(0);
+    const leftoverAnimationTimeRef = useRef(leftoverAnimationTime);
+    leftoverAnimationTimeRef.current = leftoverAnimationTime;
+
+    // Browser compatibility for requestAnimationFrame
+    // https://www.sitepoint.com/simple-animations-using-requestanimationframe/
+    const _requestAnimationFrame = function(win, t) {
+        return win["webkitR" + t] || win["r" + t] || win["mozR" + t]
+                || win["msR" + t] || function(fn) { setTimeout(fn, 60) }
+    }(window, "equestAnimationFrame");
+
+    const animation = [
+        // Walk far right
+        {
+            time: 3,
+            start: 300,
+            end: 415,
+            run: function (rate) {
+                updateXPos((rate*(this.end - this.start) + this.start));
+            }
+        },
+        // Pause
+        {
+            time: 1.5,
+            run: function (rate) {
+                if (rate === 0) {
+                    let currentSpeechIndex = speeches.indexOf(currentSpeech);
+                    changeSpeech(speeches[getRandomArbitraryExlusive(0, speeches.length - 2, currentSpeechIndex)]);
+                    // toggleSpeech(prevState => !prevState); // show speech
+                    toggleSpeech(true);
+                }
+            }
+        },
+        // Look back and forth, ending facing left
+        {
+            time: 0.5,
+            run: function (rate) {
+                if (rate === 0) updateDirection(previousDir => previousDir === "right" ? "left" : "right");
+            }
+        },
+        {
+            time: 0.5,
+            run: function (rate) {
+                if (rate === 0) updateDirection(previousDir => previousDir === "right" ? "left" : "right");
+            }
+        },
+        {
+            time: 0.5,
+            run: function (rate) {
+                if (rate === 0) updateDirection(previousDir => previousDir === "right" ? "left" : "right");
+            }
+        },
+        {
+            time: 0.5,
+            run: function (rate) {
+                if (rate === 0) updateDirection(previousDir => previousDir === "right" ? "left" : "right");
+            }
+        },
+        {
+            time: 0.15,
+            run: function (rate) {
+                if (rate === 0) updateDirection(previousDir => previousDir === "right" ? "left" : "right");
+            }
+        },
+        // Walk left then Pace back and forth
+        {
+            time: 0.75,
+            start: 415,
+            end: 350,
+            run: function (rate) {
+                // if (rate === 0) toggleSpeech(prevState => !prevState) // hide speech
+                if (rate === 0) toggleSpeech(false) // hide speech
+
+                updateXPos((rate*(this.end - this.start) + this.start));
+            }
+        },
+        {
+            time: 0.5,
+            start: 350,
+            end: 400,
+            run: function (rate) {
+                if (rate === 0) updateDirection(previousDir => previousDir === "right" ? "left" : "right");
+                updateXPos((rate*(this.end - this.start) + this.start));
+            }
+        },
+        {
+            time: 0.5,
+            start: 400,
+            end: 350,
+            run: function (rate) {
+                if (rate === 0) updateDirection(previousDir => previousDir === "right" ? "left" : "right");
+                updateXPos((rate*(this.end - this.start) + this.start));
+            }
+        },
+        {
+            time: 0.5,
+            start: 350,
+            end: 400,
+            run: function (rate) {
+                if (rate === 0) updateDirection(previousDir => previousDir === "right" ? "left" : "right");
+                updateXPos((rate*(this.end - this.start) + this.start));
+            }
+        },
+        // Walk far left, pause, then return to initial 0-point (300px)
+        {
+            time: 3,
+            start: 400,
+            end: 200,
+            run: function (rate) {
+                if (rate === 0) updateDirection(previousDir => previousDir === "right" ? "left" : "right");
+                updateXPos((rate*(this.end - this.start) + this.start));
+            }
+        },
+        {
+            time: 2,
+            run: function (rate) {
+                if (rate === 0) {
+                    let currentSpeechIndex = speeches.indexOf(currentSpeech);
+                    changeSpeech(speeches[getRandomArbitraryExlusive(0, speeches.length - 2, currentSpeechIndex)]);;
+                    // toggleSpeech(prevState => !prevState); // show speech
+                    toggleSpeech(true);
+                }
+            }
+        },
+        {
+            time: 2,
+            start: 200,
+            end: 300,
+            run: function (rate) {
+                if (rate === 0) updateDirection(previousDir => previousDir === "right" ? "left" : "right");
+                // if (rate === 1) toggleSpeech(prevState => !prevState); // hide speech
+                if (rate === 1) toggleSpeech(false); // hide speech
+
+                updateXPos((rate*(this.end - this.start) + this.start));
+            }
+        },
+    ];
+
+    const animate = (list) => {
+        let item,
+            duration,
+            end = 0,
+            animationList = list.map(obj => ({...obj}) ); // .shift() will modify our original array which we need to loop the animation
+            //    same as   list.map(obj => Object.assign({}, a));
+    
+        const step = () => {
+            if (pauseRef.current) {
+                _requestAnimationFrame(step);
+                saveLeftoverAnimationTime(animationList);
+                return;
+            }
+            let current = Date.now(),
+                remaining = end - current;
+            
+            if (remaining < 60) {
+            // end animation here as less than 60ms left, which is our frame rate
+                if (item) item.run(1) // 1 = progress at 100%
+
+                item = animationList.shift(); // get next animation to start
+
+                if (item) {
+                    duration = item.time * 1000;
+                    end = current + duration;
+                    item.run(0); //0 = progress is at 0%
+                } else {
+                    return;
+                }
+            } else {
+                let rate = remaining/duration;
+                // Easing formula 
+                // https://www.sitepoint.com/simple-animations-using-requestanimationframe/
+                rate = 1 - Math.pow(rate, 3);
+                // rate = 1 - rate;
+                item.run(rate);
+            }
+            _requestAnimationFrame(step);
+
+        };
+        step();
     }
 
+    const saveLeftoverAnimationTime = (list) => {
+        let total = 0;
+        list.forEach(obj => total += obj.time);
+        updateLeftoverAnimationTime(total);
+    }
+
+    const handleMazeSolvedEvent = function() {
+        console.log("mazeSolved event fired!");
+        changeSpeech(speeches[speeches.length - 1])
+        toggleSpeech(true);
+        pauseAnimation(true);
+        clearCurrentTimeout();
+    };
+
+    const handleMazeGenerationEvent = function() { 
+        console.log("we had a maze generation event!");
+        // If paused, it means maze was previously solved 
+        if (pauseRef.current) {
+            if (speechVisible) toggleSpeech(false);
+            pauseAnimation(false);
+        }
+    };
+
+    const clearCurrentTimeout = function() {
+        clearTimeout(timeoutIdRef);
+    }
+
+    const loopAnimation = (initialAnimation, unpausingAnimation, animation) => {
+        let totalAnimatiomTimeLoop = 0;
+        animation.forEach(item => totalAnimatiomTimeLoop += item.time * 1000);
+        totalAnimatiomTimeLoop += 4500; // 4.5s delay in-between animations
+    
+    
+        const loop = () => {
+            animate(animation);
+            updateTimeoutId(setTimeout(loop, totalAnimatiomTimeLoop));
+        };
+        if (initialAnimation) {
+            animate(animation);
+            updateTimeoutId(setTimeout(loop, totalAnimatiomTimeLoop));
+        } else if (unpausingAnimation) {
+            updateTimeoutId(setTimeout(loop, leftoverAnimationTimeRef));
+        } else {
+            updateTimeoutId(setTimeout(loop, totalAnimatiomTimeLoop));
+        }
+    }
 
     useEffect(() => {
-        MazeStore.addSpriteEventListener('alaska', handleEvent);
-        let paceId = setInterval(paceAnimation, 30000);
-        // TO DO
-        // addchange listeners for when the maze is completed
-        //      stop movements
-        //      show last speech in array
-        // setInterval or random time to perform actions
-        // functionality for showing speech bubbles
-
-        // porbably put everything in one giant func
+        MazeStore.addSpriteEventListener('alaska--maze-solved', handleMazeSolvedEvent);
+        MazeStore.addSpriteEventListener('alaska--maze-generated', handleMazeGenerationEvent);
+        setTimeout(function () {
+            loopAnimation(true, false, animation);
+        }, 1000);
         return () => {
-            MazeStore.removeSpriteEventListener('alaska', handleEvent);
-            clearInterval(paceId);
+            MazeStore.removeSpriteEventListener('alaska--maze-solved', handleMazeSolvedEvent);
+            MazeStore.removeSpriteEventListener('alaska--maze-generated', handleMazeGenerationEvent);
         }
     }, []);
 
-    function displaySpeech(mazeSolved) {
-        if (mazeSolved) {
-            let solvedSpeech = speeches[-1];
-            updateSpeech(solvedSpeech);
-            hideSpeech(false);
-        } else {
-            let randomIndex = Math.floor(getRandomArbitrary(0, speeches.length - 1));
-            let speech = speeches[getRandomArbitrary(0, speeches.length - 1)]
-            updateSpeech(speech);
-            hideSpeech(false);
-        }
-    }
-    function paceAnimation() {
-        const zeroPoint = 300; // where our sprite is position on the page by default
-        // posistion thresholds for animations
-
-        // Add some randomization here
-        const config = {
-            smallPaceRight: (50 + zeroPoint),
-            smallPaceLeft: (zeroPoint),
-            mediumPaceRight: (200 + zeroPoint),
-            largePaceRight: (450 + zeroPoint),
-            mediumPaceLeft: (-100 + zeroPoint)
-        }
-        let smallPaces = 0;
-        const smallPaceBackForthId = setInterval(smallPaceBackForth, 20);
-        const speechId = setInterval(function() {
-            hideSpeech(!hiddenRef.current);
-            setTimeout(displaySpeech, 2000);
-        }, 5000);
-
-
-        function mediumPaceAndDoubleTake() {
-            // Walk left, double takes, walk right
-            let doubleTakes = 0,
-                walkLeftId = setInterval(walkLeft, 20),
-                walkRightId,
-                doubleTakesId;
-
-            // Turn left
-            updateFacingRight(false);
-            // walk left interval
-            
-            
-            doubleTakesId = setInterval(function () {
-                updateFacingRight(!facingRightRef.current);
-                doubleTakes++
-                if (doubleTakes > 4) {
-                    clearInterval(doubleTakesId);
-                    walkRightId = setInterval(walkRight, 20);
-                }
-            }, 2200);
-
-
-
-
-            function walkLeft() {
-                if (xPosRef.current > config["mediumPaceLeft"]) {
-                    updatePos(xPosRef.current - 1);
-                    return;
-                } else if (xPosRef.current === config["mediumPaceLeft"]) {
-                    clearInterval(walkLeftId);
-                }
-            }
-
-            function walkRight() {
-                if (xPosRef.current < zeroPoint) {
-                    updatePos(xPosRef.current + 1);
-                    return;
-                } else if (xPosRef.current === zeroPoint) {
-                    clearInterval(walkRightId);
-                    console.log("clear interval!");
-                    clearInterval(speechId);
-                    
-                    hideSpeech(!hiddenRef.current);
-                }
-            }
-        }
-
-        function smallPaceBackForth() {
-            // pace back and forth 4 times, starting from zeroPoint
-            // calls mediumPaceAndDoubleTake upon completion
-
-            if (xPosRef.current === config["smallPaceLeft"] && !facingRightRef.current && smallPaces > 4) {
-                // We have finished the animation
-                //      Turn to faceRight
-                //      Clear the interval
-                updateFacingRight(true);
-                clearInterval(smallPaceBackForthId);
-                mediumPaceAndDoubleTake();
-            } else if (xPosRef.current < config["smallPaceRight"] && facingRightRef.current) {
-                // Walking Right
-                updatePos(xPosRef.current + 1);
-                return;
-            } else if (xPosRef.current > config["smallPaceLeft"] && !facingRightRef.current) {
-                // Walking Left
-                updatePos(xPosRef.current - 1);
-                return;
-            } else if (xPosRef.current === config["smallPaceRight"] && facingRightRef.current) {
-                // We just completed a pace to the right
-                //      Iterate paces
-                //      Turn to left
-
-                smallPaces++;
-                updateFacingRight(false);
-                return;
-            } else if (xPosRef.current === config["smallPaceLeft"] && !facingRightRef.current) {
-                // We just completed a pace to the left
-                //      Iterate paces
-                //      Turn to the right
-                smallPaces++;
-                updateFacingRight(true);
-                return;
-            }
-
-        };
-
-    }
-
     return (
-        <div id="alaska" style={{left: xPos + 'px'}}>
-            <SpeechBubble 
-                speech={currentSpeech}
-                facingRight={facingRight}
-                hidden={hidden}
+        <div id="alaska" style={{left: `${xPos}` + 'px'}}>
+
+            <SpeechBubble
+                alaskaDirection={alaskaDirection}
+                currentSpeech={currentSpeech}
+                speechVisible={speechVisible}
             />
-            <img style={{transform: `scaleX(${facingRight ? 1 : -1})`}} src={sprite}/>
+            <img style={{ transform: `scaleX(${alaskaDirection === "right" ? 1 : -1 }`}} src={sprite}/>
         </div>
     );
 };
 
-const SpeechBubble = ({ speech, facingRight, hidden }) => {
+const SpeechBubble = ({ currentSpeech, alaskaDirection, speechVisible }) => {
     return (
-        <div id="speech" style={{visibility: hidden ? 'hidden' : 'visible'}}> 
-            <div class="arrow"></div>
-            <p>{speech}</p>
+        // <div id="speech" style={{visibility: speechVisible ? 'visible' : 'hidden', transform: `scaleX(${alaskaDirection === "right" ? 1 : -1 }` }}>
+        <div id="speech" style={{visibility: speechVisible ? 'visible' : 'hidden'}}> 
+            <div className={"arrow " + (alaskaDirection === "right" ? "" : "inverted")}></div>
+            <p>{currentSpeech}</p>
         </div>
     )
 }
