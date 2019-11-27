@@ -32,8 +32,6 @@ const WalkerManager = {
         this.ctx.strokeStyle = this.shadeMap[1];
         this.ctx.lineCap = "square";
         this.ctx.lineWidth = mazeConfig.pathWidth;
-        this.ctx.beginPath();
-        ctx.moveTo(this.x * (mazeConfig.pathWidth + mazeConfig.wall) + this.mazeConfig.offset, this.y * (mazeConfig.pathWidth + mazeConfig.wall) + this.mazeConfig.offset)
         
         // Set visited to all zeroes
 		for (let y = 0; y < mazeConfig.maze.length; y++) {
@@ -44,23 +42,39 @@ const WalkerManager = {
 
         for (let y = 0; y < mazeConfig.maze.length; y++) {
             for (let x = 0; x < mazeConfig.maze.length; x++) {
-                // For now I'm setting this to 9 because it will be easier to read the maze in the
-                // console, but it should probably be set to "*" or something for prevention of bugs
                 mazeConfig.maze[y][x] === 0 ? this.maze[y][x] = "*" : this.maze[y][x] = 0;
             }
         }
         
         // Set starting point
         this.visited[this.y][this.x] = 1;
+    },
+
+    draw: function(prevX, prevY, shade) {
+        this.ctx.strokeStyle = shade;
+        this.ctx.beginPath();
+        this.ctx.moveTo(prevX/2 * (this.mazeConfig.pathWidth + this.mazeConfig.wall) + this.mazeConfig.offset, 
+                        prevY/2 * (this.mazeConfig.pathWidth + this.mazeConfig.wall) + this.mazeConfig.offset);
+        this.ctx.lineTo(this.x/2 * (this.mazeConfig.pathWidth + this.mazeConfig.wall) + this.mazeConfig.offset,
+                        this.y/2 * (this.mazeConfig.pathWidth + this.mazeConfig.wall) + this.mazeConfig.offset);
+        this.ctx.stroke();
+        this.ctx.closePath();
+    },
+
+    moveWithWall: function(point) {
+        let prevX = this.x,
+            prevY = this.y;
+        this.x = point[0];
+        this.y = point[1];
+        console.log("point", point);
+        console.log("this.visited", this.visited);
+        let shade = this.visited[this.y][this.x] > 0 ? this.shadeMap[2] : this.shadeMap[1];
+        this.draw(prevX, prevY, shade);
+        this.visited[this.y][this.x]++;
 
     },
 
-    // ********** TO-DO: **********
-    //  - Remove drawing functionality from move method and add to here
-    draw: function() {
-    },
-
-    move: function(direction, backtrack) {
+    moveWithTremaux: function(direction, backtrack) {
         let movedToNewTile = false,
             prevX = this.x,
             prevY = this.y;
@@ -69,52 +83,35 @@ const WalkerManager = {
         if (backtrack || !this._hasVisited(direction)) {
             // Get the new x,y for the potential move.
             let point = this._getXYForDirection(direction);
-
             // Check if this move is valid // if it is then update our walker position
-            if (this._canMove(point.x, point.y)) {
+            if (this._canMoveWithTremaux(point.x, point.y)) {
                 // console.log("can move to point! updating this.x to X", point.x, "this.y to Y", point.y, "movedToNewTile set to true");
                 this.x = point.x;
                 this.y = point.y;
                 movedToNewTile = true;
             }
-
         }
 
         if (movedToNewTile) {
-            this.ctx.strokeStyle = backtrack ? this.shadeMap[2] : this.shadeMap[1];
-            this.ctx.beginPath();
-            this.ctx.moveTo(prevX/2 * (this.mazeConfig.pathWidth + this.mazeConfig.wall) + this.mazeConfig.offset, 
-                            prevY/2 * (this.mazeConfig.pathWidth + this.mazeConfig.wall) + this.mazeConfig.offset);
-            this.ctx.lineTo(this.x/2 * (this.mazeConfig.pathWidth + this.mazeConfig.wall) + this.mazeConfig.offset,
-                            this.y/2 * (this.mazeConfig.pathWidth + this.mazeConfig.wall) + this.mazeConfig.offset);
-            this.ctx.stroke();
+            this.draw(prevX, prevY, backtrack ? this.shadeMap[2] : this.shadeMap[1]);
 
+            // set new prev coords
             this.prevX = prevX;
             this.prevY = prevY;
-
+    
+            // mark as visited
             this.visited[this.y][this.x]++;
-            // console.log("walker position updated, iterated visited:", this.visited, "this.x", this.x, "this.y", this.y);
-            // console.log("compare with maze", this.maze);
-
-
-
+    
             if (backtrack) {
-                // console.log("backtracking so setting visited to 2");
-                this.visited[this.prevX][this.prevY] = 2;
+                // IF we are backtracking, we've turned around so do not visit the last tile again
+                this.visited[this.prevY][this.prevX] = 2;
             }
             
             if (this.visited[prevY][prevX] === 2 && this.visited[this.y][this.x] === 1) {
                 // Found an unwalked tile while backtracking, Mark last tile to 1 so we can
+                // revisit this tile again
                 this.visited[prevY][prevX] = 1;
-                this.ctx.strokeStyle = this.shadeMap[1];
-                this.ctx.beginPath();
-                this.ctx.moveTo(this.x/2 * (this.mazeConfig.pathWidth + this.mazeConfig.wall) + this.mazeConfig.offset,
-                                this.y/2 * (this.mazeConfig.pathWidth + this.mazeConfig.wall) + this.mazeConfig.offset);
-                this.ctx.lineTo(prevX/2 * (this.mazeConfig.pathWidth + this.mazeConfig.wall) + this.mazeConfig.offset, 
-                                prevY/2 * (this.mazeConfig.pathWidth + this.mazeConfig.wall) + this.mazeConfig.offset);
-
-                this.ctx.stroke();
-				// this.ctx.fillRect(prevX * 10, prevY * 10, 10, 10);          /// ****** FIX THIS
+                this.draw(prevX, prevY, this.shadeMap[1]); // in this edge case we are backtracking but we want to keep this path available
             }
         }
         return movedToNewTile;
@@ -125,30 +122,21 @@ const WalkerManager = {
         
     },
 
-    _canMove: function(x, y) {
-        // console.log("can move in X:", x, "Y:", y, "direction?", (this._isOpen(x, y) && this.visited[y][x] < 2));
-        if (!(this._isOpen(x, y) && this.visited[y][x] < 2)) {
-            // console.log("X:", x, "Y:", y, "cannot be moved to");
-            // console.log("this.maze", this.maze);
-            // console.log("this.visited", this.visited);
-        }
-        return (this._isOpen(x, y) && this.visited[y][x] < 2)
+    _canMoveWithTremaux: function(x, y) {
+        return (x >= 0 && y >= 0 && this._isOpen(x, y) && this.visited[y][x] < 2)
     },
-
     _isWall: function(x, y) {
-        return (x < 0 || y < 0 || this.maze[y][x] === "*");
+        return (this.maze[y][x] === "*");
     },
     _isOpen: function(x, y) {
         return !this._isWall(x, y);
     },
-
     _hasVisited: function(direction) {
         let point = this._getXYForDirection(direction);
 
         // short circuiting here will prevent any TypeErrors
-        return (this._outOfBounds(point) && this.visited[point.y][point.x] > 0)
+        return (this._outOfBounds(point) || this.visited[point.y][point.x] > 0)
     },
-
     _outOfBounds: function(point) {
         return (point.y < 0 || 
                 point.x < 0 ||
@@ -156,6 +144,20 @@ const WalkerManager = {
                 this.visited[point.y][point.x] === undefined)
     },
 
+    removeColor: function(color) {
+        var canvasData = this.ctx.getImageData(0, 0, 256, 256),
+        pix = canvasData.data;
+
+        for (var i = 0, n = pix.length; i <n; i += 4) {
+            if(pix[i] === color[0] && pix[i+1] === color[1] && pix[i+2] === color[2]){
+                pix[i+3] = 0;   
+            }
+        }
+
+    this.ctx.putImageData(canvasData, 0, 0);
+    },
+
+    // ************ Currently not using, can possibly throw away ************
     _getShade: function() {
         let shadeCode = this.maze[this.y][this.x]
         return this.shadeMap[shadeCode];
@@ -166,34 +168,26 @@ const WalkerManager = {
     _getXYForDirection: function(direction) {
         let point = {x: this.x, y: this.y};
         switch(direction) {
-            case 0: // North
-                    // point.x = this.x;
-                    // point.y = this.y - 1;
+                    // TREMAUX | WALL FOLLOWER
+            case 0:   // North | Relative Left
                     point.y--;
                     break;
-            case 1: // East
-
-                    // point.x = this.x + 1;
-                    // point.y = this.y;
+            case 1:    // East | Relative Forward
                     point.x++;
                     break;
-            case 2: // South
-                    // point.x = this.x;
-                    // point.y = this.y + 1;
+            case 2:   // South | Relative Right
                     point.y++;
                     break;
-            case 3: // West
-                    // point.x = this.x - 1;
-                    // point.y = this.y;
-                    point.x--
+            case 3:    // West | Relative Backward
+                    point.x--;
                     break;
         }
-        // console.log("getXYDirection, this.x:", this.x, "this.y", this.y, "point after calculation", point);
         return point;
     }
 }
 
-// http://www.primaryobjects.com/maze
+// createArray of length with x dimensions
+// https://stackoverflow.com/questions/966225/how-can-i-create-a-two-dimensional-array-in-javascript
 function createArray(length) {
     var arr = new Array(length || 0),
         i = length;
@@ -207,4 +201,3 @@ function createArray(length) {
 }
 
 export default WalkerManager;
-

@@ -27,7 +27,8 @@ const SelectorModules = () => {
     
     const algoConfig = {
         options: [
-            {value:"tremaux", label: "Trémaux (DFS)"}
+            {value:"tremaux", label: "Trémaux (DFS)"},
+            {value:"wallFollower", label: "Wall Follower (Left Hand Rule)"}
         ],
         type: "algo",
         placeholder: "Algorithm",

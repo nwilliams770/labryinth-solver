@@ -23,11 +23,10 @@ class Maze extends React.Component {
         super(props);
         this.onChange = this.onChange.bind(this);
         this.state =  getMazeConfigState();
-
     };
 
     componentDidMount() {
-        MazeStore.addChangeListener(this.onChange);
+        // MazeStore.addChangeListener(this.onChange); // Don't think we even need this anymore, we're not changing the size of the maze
         MazeStore.generateInitialMaze(this._mazeCtx);
         MazeStore.savePathContext(this._pathCtx); 
         // We aren't doing any component-level interactins with the store that would provide the ctx so we can have to manually provide it
@@ -35,9 +34,9 @@ class Maze extends React.Component {
         //  WalkerManager.initialize(this._pathCtx, this.state.mazeConfig); 
     };
 
-    componentWillUnmount() {
-        MazeStore.removeChangeListener(this.onChange);
-    };
+    // componentWillUnmount() {
+    //     MazeStore.removeChangeListener(this.onChange);
+    // };
 
     // No binding required
     saveContext = (ctx, label) => {
@@ -45,7 +44,6 @@ class Maze extends React.Component {
     };
 
     onChange() {
-        console.log("Change happened in Maze component");
         this.setState(getMazeConfigState());
     };
 
