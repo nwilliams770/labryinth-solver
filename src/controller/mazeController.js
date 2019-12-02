@@ -35,6 +35,10 @@ export const MazePathController = {
         this.ctx.clearRect(0,0,this.mazeConfig.canvasWidth,this.mazeConfig.canvasHeight);
     },
 
+    runWithoutTimeout: function() {
+        this.algo.solve();
+    },
+
 
     // This wil have to deal with multiple run methods depending
     run: function() {
@@ -49,8 +53,8 @@ export const MazePathController = {
             this.timeoutId = setTimeout(function() {
                 self.run();
             }, this.speed);
-        } else {
 
+        } else {
             this.algo.solve();
             MazeStore.emitSpriteEvent('alaska--maze-solved');
 

@@ -1,3 +1,4 @@
+
 // *** SAMPLE MAZE CONFIG ***
 // const mazeConfig = {
 //     pathWidth: 20,
@@ -60,20 +61,61 @@ const WalkerManager = {
         this.ctx.stroke();
         this.ctx.closePath();
     },
+    drawPath: function(path) {
+        // set starting x, y
+        let startingCell = path.shift();
+        let prevX = startingCell[0];
+        let prevY = startingCell[1];
+        let currentCell;
+
+        while (path.length > 0) {
+            currentCell = path.shift();
+            this.x = currentCell[0];
+            this.y = currentCell[1];
+            this.draw(prevX, prevY, this.shadeMap[1]);
+            prevX = this.x;
+            prevY = this.y;
+        }
+    },
+    visitNeighbors: function(x, y) {
+        console.log("visitNeighbors     x:", x, "y:", y);
+        let cellsToEnqueue = [];
+        // set x y to this.x, this.y generate neighbor
+        this.x = x;
+        this.y = y;
+
+
+        for (let i = 0; i < 4; i++) {
+            let neighbor = this._getXYForDirection(i);
+            // console.log("i:", i, "from", [prevX, prevY], "=> neighbor", neighbor);
+            if (!this._hasVisited(i) && this._isOpen(neighbor.x, neighbor.y)) {
+                // Update this.x, this.y for this.draw
+                // Add cells to enqueue
+                // Mark visited
+                this.x = neighbor.x;
+                this.y = neighbor.y;
+                this.draw(x, y, this.shadeMap[1]);
+                this.visited[this.y][this.x]++;
+                // reset this.x and this.y for next neighbors
+                this.x = x;
+                this.y = y;
+                cellsToEnqueue.push(neighbor);
+            }
+        }
+        return cellsToEnqueue;
+
+    },
 
     moveWithWall: function(point) {
         let prevX = this.x,
             prevY = this.y;
         this.x = point[0];
         this.y = point[1];
-        console.log("point", point);
-        console.log("this.visited", this.visited);
         let shade = this.visited[this.y][this.x] > 0 ? this.shadeMap[2] : this.shadeMap[1];
         this.draw(prevX, prevY, shade);
         this.visited[this.y][this.x]++;
 
     },
-
     moveWithTremaux: function(direction, backtrack) {
         let movedToNewTile = false,
             prevX = this.x,

@@ -63,6 +63,15 @@ const MazeStore = Object.assign({}, EventEmitter.prototype, {
     getMazeConfig: function() {
         return mazeConfig;
     },
+    getSteps: function() {
+        return steps;
+    },
+    updateSteps: function() {
+        steps++;
+    },
+    resetSteps: function() {
+        steps = 0;
+    },
     _redrawMaze: function(cellSelectionMethod) {
         MazePathController.clearTimeout();                    
         MazePathController.clearCanvas(); 
