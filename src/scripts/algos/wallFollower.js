@@ -20,7 +20,6 @@ const wallFollower = {
         let point = this.canMoveLeft(this.currentDirection);
         // Move left anytime we can
         if (point) {
-            console.log("moving left")
             this.walker.moveWithWall(point);
             this.rotateLeftNinety();
         } 
@@ -28,21 +27,19 @@ const wallFollower = {
         // Move forward if possible
         point = this.canMoveForward(this.currentDirection);
         if (point) {
-            console.log("moving forward")
-
             this.walker.moveWithWall(point);
         } else {
             // If we can't move left or forward, we may be in some corner where we can only turn right
             // But if we can't turn right, we're in a deadend and need to turn around
             point = this.canMoveRight(this.currentDirection);
             if (point) {
-                console.log("moving right")
+
 
                 this.walker.moveWithWall(point);
                 this.rotateRightNinety();
 
             } else {
-                console.log("moving backward")
+
 
                 point = this.backTrack();
                 this.walker.moveWithWall(point);
