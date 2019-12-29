@@ -25,9 +25,6 @@ const bfs = {
         let y = this.colQueue.shift(),
             x = this.rowQueue.shift();
 
-        console.log("x-y in step  x:", x, "y:", y);
-
-
         if (this.foundEnd(x, y)) {
             this.endFound = true;
             // maybe return here?
@@ -52,9 +49,7 @@ const bfs = {
         
     },
     processCells: function(cells, startingCell) {
-        console.log("processing cells!", cells, "length:", cells.length);
         cells.forEach(cell => {
-            console.log("cell", cell);
             this.nodesInNextLayer++;
             this.colQueue.push(cell.y);
             this.rowQueue.push(cell.x);
@@ -68,9 +63,6 @@ const bfs = {
         return this.endFound;
     },
     solve: function() {
-        console.log("solved!");
-
-        console.log(this.visitedPaths);
         // return;
         let currentCell = [this.end.x, this.end.y],
             shortestPath = [currentCell];
