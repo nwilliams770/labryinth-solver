@@ -29,6 +29,8 @@ const Alaska = () => {
     const [xPos, updateXPos] = useState(300);
     const [alaskaDirection, updateDirection] = useState("right");
     const [speechVisible, toggleSpeech] = useState(false);
+    const speechVisibleRef = useRef(speechVisible);
+    speechVisibleRef.current = speechVisible;
     const [currentSpeech, changeSpeech] = useState(speeches[0]);
 
     const [timeoutId, updateTimeoutId] = useState(0);
@@ -185,6 +187,7 @@ const Alaska = () => {
             //    same as   list.map(obj => Object.assign({}, a));
     
         const step = () => {
+            // console.log("calling step, pauseRef.current", pauseRef.current);
             if (pauseRef.current) {
                 _requestAnimationFrame(step);
                 saveLeftoverAnimationTime(animationList);
@@ -234,11 +237,14 @@ const Alaska = () => {
         clearCurrentTimeout();
     };
 
-    const handleMazeGenerationEvent = function() { 
+    const handleToggleSpeechEvent = function() { 
         console.log("we had a maze generation event!");
+        console.log("pauseRef.current", pauseRef.current);
+        console.log("speechVisible", speechVisible);
+        console.log("speechVisibleRef.current", speechVisibleRef.current);
         // If paused, it means maze was previously solved 
         if (pauseRef.current) {
-            if (speechVisible) toggleSpeech(false);
+            if (speechVisibleRef.current) toggleSpeech(false);
             pauseAnimation(false);
         }
     };
@@ -268,14 +274,14 @@ const Alaska = () => {
     }
 
     useEffect(() => {
-        MazeStore.addSpriteEventListener('alaska--maze-solved', handleMazeSolvedEvent);
-        MazeStore.addSpriteEventListener('alaska--maze-generated', handleMazeGenerationEvent);
+        MazeStore.addCustomEventListener('alaska--maze-solved', handleMazeSolvedEvent);
+        MazeStore.addCustomEventListener('alaska--toggle-speech', handleToggleSpeechEvent);
         setTimeout(function () {
             loopAnimation(true, false, animation);
         }, 1000);
         return () => {
-            MazeStore.removeSpriteEventListener('alaska--maze-solved', handleMazeSolvedEvent);
-            MazeStore.removeSpriteEventListener('alaska--maze-generated', handleMazeGenerationEvent);
+            MazeStore.removeCustomEventListener('alaska--maze-solved', handleMazeSolvedEvent);
+            MazeStore.removeCustomEventListener('alaska--toggle-speech', handleToggleSpeechEvent);
         }
     }, []);
 

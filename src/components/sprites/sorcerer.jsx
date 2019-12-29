@@ -19,14 +19,14 @@ const Sorcerer = (props) => {
     }, []);
 
     useEffect(() => {
-        MazeStore.addSpriteEventListener('sorcerer', handleSpriteEvent);
+        MazeStore.addCustomEventListener('sorcerer--trigger', handleSpriteEvent);
         // Set to false for future animation triggers
         setTimeout(() => {
             setAnimate(false);
         }, 1500);
 
         return () => {
-            MazeStore.removeSpriteEventListener('sorcerer', handleSpriteEvent);
+            MazeStore.removeCustomEventListener('sorcerer--trigger', handleSpriteEvent);
         }
     }, [handleSpriteEvent]); 
 

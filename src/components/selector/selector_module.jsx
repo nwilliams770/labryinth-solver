@@ -12,6 +12,7 @@ const SelectorModule = ({ config }) => {
                 onChange={(input) => config.handleChange(input)}
                 classNamePrefix={"selector"}
                 value={config.selection}
+                // menuIsOpen={true}
             />
         </div>
     );
