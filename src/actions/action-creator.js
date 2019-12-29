@@ -14,3 +14,9 @@ export const runSolverScript = (scriptName) => {
         scriptName: scriptName
     });
 };
+
+export const iterateSteps = () => {
+    AppDispatcher.dispatch({
+        actionType: "ITERATE_STEPS",
+    });
+};
