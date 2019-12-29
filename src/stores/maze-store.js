@@ -15,7 +15,6 @@ let mazeConfig = {
     wallColor: '#d24',
     pathColor: '#222a33',
     maze: [],
-    test: "oldState"
 }
 mazeConfig.canvasWidth = mazeConfig.outerWall * 2 + (mazeConfig.width * (mazeConfig.pathWidth + mazeConfig.wall)) - mazeConfig.wall;
 mazeConfig.canvasHeight = mazeConfig.outerWall * 2 + (mazeConfig.height * (mazeConfig.pathWidth + mazeConfig.wall)) - mazeConfig.wall;
@@ -24,36 +23,32 @@ mazeConfig.offset = mazeConfig.pathWidth/2 + mazeConfig.outerWall;
 let maze = [],
     defaultCellSelectionMethod = 'newest',
     steps = 0,
+    savedSteps = [],
+    currentScript = "",
     mazeCtx = null,
     pathCtx = null;
 
+
+
 const MazeStore = Object.assign({}, EventEmitter.prototype, {
 
-    // This can be refactored and most likely consolidated into just 3 methods
-    emitChange: function() {
-        this.emit('change');
+
+    addCustomEventListener: function(eventLabel, callback) {
+        this.on(eventLabel, callback);
     },
-    addChangeListener: function(callback) {
-        this.on('change', callback);
+    removeCustomEventListener: function(eventLabel, callback) {
+        this.removeListener(eventLabel, callback);
     },
-    removeChangeListener: function(callback) {
-        this.removeListener('change', callback);
-    },
-    emitSpriteEvent: function(spriteLabel) {
-        this.emit(spriteLabel);
-    },
-    addSpriteEventListener: function(spriteLabel, callback) {
-        this.on(spriteLabel, callback);
-    },
-    removeSpriteEventListener: function(spriteLabel, callback) {
-        this.removeListener(spriteLabel, callback);
+    emitCustomEvent: function(eventLabel) {
+        this.emit(eventLabel);
     },
     generateInitialMaze: function(context) {
         mazeCtx = context;
-        MazeStore.emitSpriteEvent('sorcerer');
+        MazeStore.emitCustomEvent('sorcerer--trigger');
         maze = MazeGenerator.initialize(mazeCtx, defaultCellSelectionMethod, mazeConfig);
         mazeConfig.maze = maze;
-        MazeStore.emitChange();
+        console.log("maze!", maze)
+        // MazeStore.emitChange(); not needed as we're not changing maze size
     },
     savePathContext: function(context) {
         pathCtx = context;
@@ -66,8 +61,11 @@ const MazeStore = Object.assign({}, EventEmitter.prototype, {
     getSteps: function() {
         return steps;
     },
-    updateSteps: function() {
+    iterateSteps: function() {
+        console.log("maze store has been hit");
         steps++;
+        console.log("steps", steps);
+        MazeStore.emitCustomEvent("steps--iterate");
     },
     resetSteps: function() {
         steps = 0;
@@ -78,10 +76,16 @@ const MazeStore = Object.assign({}, EventEmitter.prototype, {
         maze = MazeGenerator.redrawMaze(cellSelectionMethod);
         mazeConfig.maze = maze;
         WalkerManager.updateConfig(mazeConfig);
-        MazeStore.emitSpriteEvent('sorcerer');
-        MazeStore.emitSpriteEvent('alaska--maze-generated');
-        MazeStore.emitChange(); // to provide mazeConfig to mazeLayer
+        MazeStore.emitCustomEvent('sorcerer--trigger');
+        MazeStore.emitCustomEvent('alaska--toggle-speech');
+        // MazeStore.emitChange(); // to provide mazeConfig to mazeLayer
     },
+
+    resetControllerAndWalker: function() {
+        WalkerManager.initialize(pathCtx, mazeConfig); // reset visited
+        MazePathController.initialize(pathCtx, WalkerManager, mazeConfig); // re-initialize for any potential mazeConfig changes
+    },
+
     _runSolverScript: function(scriptName) {
         // Stop any currently running scripts
         // Clear the pathCtx
@@ -89,7 +93,13 @@ const MazeStore = Object.assign({}, EventEmitter.prototype, {
         // Locate the script and run it
         MazePathController.clearTimeout();    
         MazePathController.clearCanvas();
-        MazePathController.initialize(pathCtx, WalkerManager, mazeConfig); // re-initialize for any potential mazeConfig changes
+        currentScript = scriptName;
+
+        this.resetControllerAndWalker(pathCtx);
+        MazeStore.emitCustomEvent('alaska--toggle-speech');
+
+        // we don't need to re-save the path ctx but because it initializes the walker and controller again, we can just use it;
+        // MazePathController.initialize(pathCtx, WalkerManager, mazeConfig); // re-initialize for any potential mazeConfig changes
 
         // Formatting the script path here instead of in a new method because of webpack
         // https://github.com/webpack/webpack/issues/6680
@@ -109,6 +119,9 @@ MazeStore.dispatchToken = AppDispatcher.register(function (action) {
         case "RUN_SOLVER_SCRIPT":
             // Stop any scripts from running, clear pathLayer
             MazeStore._runSolverScript(action.scriptName);
+            break;
+        case "ITERATE_STEPS":
+            MazeStore.iterateSteps();
             break;
         default:
     };

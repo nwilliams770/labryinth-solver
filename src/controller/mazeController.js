@@ -16,6 +16,7 @@ export const MazePathController = {
         this.algorithm = null;
         this.mazeConfig = mazeConfig;
         this.timeoutId = null;
+        this.stop = false;
     },
 
     initializeScript: function(algo) {
@@ -26,19 +27,23 @@ export const MazePathController = {
 
 
     clearTimeout: function() {
-        if (this.timeoutId) {
-            clearTimeout(this.timeoutId);
+        // if (this.timeoutId) {
+        //     clearTimeout(this.timeoutId);
+        // }
+        this.stop = true;
+        let id = window.setTimeout(function() {}, 0);
+        id = this.timeoutId;
+        id = id * 2;
+
+        while (id--) {
+            window.clearTimeout(id); // will do nothing if no timeout with id is present
         }
+        this.clearCanvas();
     },
 
     clearCanvas: function() {
         this.ctx.clearRect(0,0,this.mazeConfig.canvasWidth,this.mazeConfig.canvasHeight);
     },
-
-    runWithoutTimeout: function() {
-        this.algo.solve();
-    },
-
 
     // This wil have to deal with multiple run methods depending
     run: function() {
@@ -47,7 +52,7 @@ export const MazePathController = {
         let self = this;
 
         // alert("maze solved!");
-        if (!this.algo.isSolved()) {
+        if (!this.algo.isSolved() && !this.stop) {
             this.algo.step();
             // this.algo.step();
             this.timeoutId = setTimeout(function() {
@@ -56,7 +61,7 @@ export const MazePathController = {
 
         } else {
             this.algo.solve();
-            MazeStore.emitSpriteEvent('alaska--maze-solved');
+            MazeStore.emitCustomEvent('alaska--maze-solved');
 
         }
     },

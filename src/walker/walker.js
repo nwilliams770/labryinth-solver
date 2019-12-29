@@ -1,4 +1,4 @@
-
+import * as ActionCreator from '../actions/action-creator';
 // *** SAMPLE MAZE CONFIG ***
 // const mazeConfig = {
 //     pathWidth: 20,
@@ -78,7 +78,6 @@ const WalkerManager = {
         }
     },
     visitNeighbors: function(x, y) {
-        console.log("visitNeighbors     x:", x, "y:", y);
         let cellsToEnqueue = [];
         // set x y to this.x, this.y generate neighbor
         this.x = x;
@@ -105,7 +104,24 @@ const WalkerManager = {
         return cellsToEnqueue;
 
     },
+    getValidNeighbors: function(x, y) {
+        let result = [];
 
+        // set x y to this.x, this.y generate neighbor
+        this.x = x;
+        this.y = y;
+
+        for (let i = 0; i < 4; i++) {
+            let neighbor = this._getXYForDirection(i);
+            if (neighbor.x >= 0 && 
+                neighbor.y >= 0 && 
+                this._isOpen(neighbor.x, neighbor.y) &&
+                !this.visited[neighbor.y][neighbor.x].closed) {
+                    result.push(neighbor);
+            }
+        }
+        return result;
+    },
     moveWithWall: function(point) {
         let prevX = this.x,
             prevY = this.y;
@@ -135,6 +151,7 @@ const WalkerManager = {
         }
 
         if (movedToNewTile) {
+            ActionCreator.iterateSteps();
             this.draw(prevX, prevY, backtrack ? this.shadeMap[2] : this.shadeMap[1]);
 
             // set new prev coords
