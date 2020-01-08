@@ -1,4 +1,4 @@
-
+import MazePathController from '../../controller/mazeController';
 
 const aStar = {
     initialize: function (ctx, walker, mazeConfig) {
@@ -25,7 +25,6 @@ const aStar = {
 
     heap: function () {
         return new BinaryHeap(function (a, b) {
-            // console.log("a", a, "b", b);
             if (a.fCost < b.fCost) return 1;
             if (a.fCost > b.fCost) return -1;
             return 0;
@@ -73,11 +72,7 @@ const aStar = {
                     }
                 }
             })
-        } else {
-            // no solution found
         }
-
-
     },
 
     // http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
@@ -92,7 +87,23 @@ const aStar = {
         return (this.walker.x === this.end.x && this.walker.y === this.end.y);
     },
     solve: function () {
-        console.log("solved");
+        let currentCell = this.walker.visited[this.end.y][this.end.x],
+            shortestPath = [[currentCell.x, currentCell.y]],
+            shortestPathLength = 0;
+        while (true) {
+            if (shortestPath[0][0] === this.start.x && shortestPath[0][1] === this.start.y) {
+                break;
+
+            } else {
+                currentCell = currentCell.parent;
+                shortestPath.unshift([currentCell.x, currentCell.y]);
+                shortestPathLength++;
+            }
+        }
+        shortestPath.forEach(path => console.log(path));
+        console.log("shortestPath", shortestPath);
+        MazePathController.clearCanvas();
+        this.walker.drawPath(shortestPath);
     }
 }
 
@@ -168,7 +179,7 @@ class BinaryHeap {
             rightChildIndex = n * 2 + 2;
             // If there is a left child
             if (leftChildIndex < this.itemCount) {
-                console.log("leftChildIndex", leftChildIndex, "this.items", this.items);
+                // console.log("leftChildIndex", leftChildIndex, "this.items", this.items);
                 swapIndex = leftChildIndex;
 
                 // If there is a right child
@@ -201,7 +212,7 @@ class BinaryHeap {
 
 
     sortUp(i) {
-        console.log("initial i:", i);
+        // console.log("initial i:", i);
         let el = this.items[i],
         // Property of heap; subtract 1 to accomodate for 0 index
         // https://www.cs.cmu.edu/~adamchik/15-121/lectures/Binary%20Heaps/heaps.html
@@ -210,7 +221,7 @@ class BinaryHeap {
         while (true) {
             parentItem = this.items[parentIndex];
             // console.log("--------parentItem", parentItem, "------parentIndex", parentIndex);
-            console.log("parentIndex", parentIndex);
+            // console.log("parentIndex", parentIndex);
             // Score function should be structured as follows for usability
             // function (a, b) {
             //      if (a.fCost < b.fCost) {
@@ -229,7 +240,6 @@ class BinaryHeap {
             if (parentIndex > 0) {
                 parentIndex = Math.floor((i - 1) / 2); // calc new parent index
             }
-            console.log("new parent index", parentIndex, "new i", i);
         }
     }
 }
