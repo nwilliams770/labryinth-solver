@@ -30,6 +30,7 @@ const SelectorModules = () => {
             {value:"tremaux", label: "Trémaux (DFS)"},
             {value:"wallFollower", label: "Wall Follower (Left Hand Rule)"},
             {value:"bfs", label: "Breadth-First Search (Shortest Path"},
+            {value:"aStar", label: "A*"}
 
             
         ],

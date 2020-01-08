@@ -117,7 +117,7 @@ const WalkerManager = {
                 neighbor.y >= 0 && 
                 this._isOpen(neighbor.x, neighbor.y) &&
                 !this.visited[neighbor.y][neighbor.x].closed) {
-                    result.push(neighbor);
+                    result.push(this.visited[neighbor.y][neighbor.x]);
             }
         }
         return result;
