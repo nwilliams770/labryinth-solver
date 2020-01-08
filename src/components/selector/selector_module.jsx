@@ -4,6 +4,7 @@ import Select from 'react-select';
 const SelectorModule = ({ config }) => {
     return (
         <div className="selector">
+            <h4 class="label">{config.label}</h4>
             <Select
                 className={config.type}
                 options={config.options}

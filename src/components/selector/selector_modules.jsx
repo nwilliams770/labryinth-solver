@@ -22,7 +22,8 @@ const SelectorModules = () => {
             updateMazeSelection(input);
             ActionCreator.updateCellSelectionMethod(input.value);
         },
-        selection: mazeSelection
+        selection: mazeSelection,
+        label: "Maze Generation Cell Selection Method"
     };
     
     const algoConfig = {
@@ -41,7 +42,8 @@ const SelectorModules = () => {
             updateAlgoSelection(input);
             ActionCreator.runSolverScript(input.value);
         },
-        selection: algoSelection
+        selection: algoSelection,
+        label: "Maze Solving Algorithm"
     };
 
     return (
