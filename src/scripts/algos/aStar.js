@@ -1,4 +1,6 @@
 import MazePathController from '../../controller/mazeController';
+import * as ActionCreator from '../../actions/action-creator';
+
 
 const aStar = {
     initialize: function (ctx, walker, mazeConfig) {
@@ -62,7 +64,7 @@ const aStar = {
                     neighbor.hCost = this.manhattan([neighbor.x, neighbor.y], [this.end.x, this.end.y]);
                     neighbor.fCost = neighbor.gCost + neighbor.hCost;
                     this.walker.visited[neighbor.y][neighbor.x] = neighbor;
-
+                    ActionCreator.iterateSteps();
                     // If we've already visited then we rescored an el and need to update it
                     if (!previouslyVisited) {
                         this.openHeap.push(neighbor);

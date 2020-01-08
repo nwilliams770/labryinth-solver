@@ -95,6 +95,7 @@ const WalkerManager = {
                 this.y = neighbor.y;
                 this.draw(x, y, this.shadeMap[1]);
                 this.visited[this.y][this.x]++;
+                ActionCreator.iterateSteps();
                 // reset this.x and this.y for next neighbors
                 this.x = x;
                 this.y = y;
@@ -130,6 +131,7 @@ const WalkerManager = {
         let shade = this.visited[this.y][this.x] > 0 ? this.shadeMap[2] : this.shadeMap[1];
         this.draw(prevX, prevY, shade);
         this.visited[this.y][this.x]++;
+        ActionCreator.iterateSteps();
 
     },
     moveWithTremaux: function(direction, backtrack) {

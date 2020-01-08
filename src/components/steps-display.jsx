@@ -11,9 +11,24 @@ import MazeStore from '../stores/maze-store';
 //          - New algo choice while one running
 //              - reset steps of currently running
 
+const LabelKey = {
+    tremaux: "trémaux",
+    wallFollower: "wall follower",
+    bfs: "breadth-first search",
+    aStar: "a*"
+}
+
+const RecordedStep = ({script, steps}) => {
+    return (
+        <div className="recorded-step">
+            <p><span className="label">{LabelKey[script]}</span>{steps}</p>
+        </div>
+    )
+};
+
 const StepsDisplay = () => {
     const [steps, updateSteps] = useState(0);
-    const [recordedSteps, updateRecordedSteps] = useState([]);
+    const [recordedSteps, updateRecordedSteps] = useState({});
 
     const getSteps = () => {
         return MazeStore.getSteps();
@@ -24,13 +39,18 @@ const StepsDisplay = () => {
     }
 
     const handleIterateEvent = () => {
-        console.log("getSteps", getSteps());
-        console.log("steps", steps);
         updateSteps(getSteps());
     }
 
     const handleMazeSolvedEvent = () => {
+        // processRecordedSteps(getRecordedSteps());
         updateRecordedSteps(getRecordedSteps());
+    }
+
+    const processRecordedSteps = (recordedSteps) => {
+        return (Object.keys(recordedSteps).map(key => {
+            return (<RecordedStep key={"step-" + key} script={key} steps={recordedSteps[key]} />)
+        }))
     }
 
 
@@ -39,18 +59,21 @@ const StepsDisplay = () => {
         // Listen to iterate steps events coming
         // Listen to mazesolved so we know to add the steps to our state
 
-        MazeStore.addCustomEventListener("steps--iterate", handleIterateEvent);
+        MazeStore.addCustomEventListener("steps--change", handleIterateEvent);
         MazeStore.addCustomEventListener("steps--maze-solved", handleMazeSolvedEvent);
         return () => {
-            MazeStore.removeCustomEventListener("steps--iterate", handleIterateEvent);
+            MazeStore.removeCustomEventListener("steps--change", handleIterateEvent);
             MazeStore.removeCustomEventListener("steps--maze-solved", handleMazeSolvedEvent);
         }
     })
-
     return (
         <div id="steps-display">
-
             <p className={steps.length > 0 ? "" : "hidden"}>{steps}</p>
+            {/* {console.log("recordedSteps", recordedSteps)}
+            {console.log("recordedSteps--PROCESSED", processRecordedSteps(recordedSteps))} */}
+            <>
+            {processRecordedSteps(recordedSteps)}
+            </>
         </div>
     )
 }

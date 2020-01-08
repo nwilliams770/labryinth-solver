@@ -50,18 +50,19 @@ export const MazePathController = {
         // since we are dealing with the window here, we need to encapsulate this
         // in order to create our nice setTimeout recursion
         let self = this;
-
         // alert("maze solved!");
         if (!this.algo.isSolved() && !this.stop) {
             this.algo.step();
-            // this.algo.step();
             this.timeoutId = setTimeout(function() {
                 self.run();
             }, this.speed);
 
         } else {
             this.algo.solve();
-            MazeStore.emitCustomEvent('alaska--maze-solved');
+            MazeStore.recordSteps();
+            MazeStore.resetSteps();
+            MazeStore.emitCustomEvent('steps--maze-solved');
+
 
         }
     },

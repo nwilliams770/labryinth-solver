@@ -42,11 +42,6 @@ const bfs = {
             // if we want EVERY step taken, do it in process cells
 
         }
-
-
-        
-        
-        
     },
     processCells: function(cells, startingCell) {
         cells.forEach(cell => {
@@ -76,6 +71,7 @@ const bfs = {
         };
         console.log(shortestPath);
         // return;
+
         MazePathController.clearCanvas();
         this.walker.drawPath(shortestPath);
 

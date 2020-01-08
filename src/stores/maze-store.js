@@ -23,7 +23,7 @@ mazeConfig.offset = mazeConfig.pathWidth/2 + mazeConfig.outerWall;
 let maze = [],
     defaultCellSelectionMethod = 'newest',
     steps = 0,
-    savedSteps = [],
+    recordedSteps = {},
     currentScript = "",
     mazeCtx = null,
     pathCtx = null;
@@ -61,14 +61,24 @@ const MazeStore = Object.assign({}, EventEmitter.prototype, {
     getSteps: function() {
         return steps;
     },
+    // This is only called when a maze solved event has occured
+    getRecordedSteps: function() {
+        return recordedSteps;
+    },
+    recordSteps: function () {
+        recordedSteps[currentScript] = steps;
+    },
     iterateSteps: function() {
-        console.log("maze store has been hit");
         steps++;
-        console.log("steps", steps);
-        MazeStore.emitCustomEvent("steps--iterate");
+        MazeStore.emitCustomEvent("steps--change");
     },
     resetSteps: function() {
         steps = 0;
+        MazeStore.emitCustomEvent("steps--change");
+    },
+    resetRecordedSteps: function () {
+        recordedSteps = {};
+        MazeStore.emitCustomEvent("steps--maze-solved");
     },
     _redrawMaze: function(cellSelectionMethod) {
         MazePathController.clearTimeout();                    
@@ -76,6 +86,7 @@ const MazeStore = Object.assign({}, EventEmitter.prototype, {
         maze = MazeGenerator.redrawMaze(cellSelectionMethod);
         mazeConfig.maze = maze;
         WalkerManager.updateConfig(mazeConfig);
+        MazeStore.resetRecordedSteps();
         MazeStore.emitCustomEvent('sorcerer--trigger');
         MazeStore.emitCustomEvent('alaska--toggle-speech');
         // MazeStore.emitChange(); // to provide mazeConfig to mazeLayer
@@ -93,6 +104,7 @@ const MazeStore = Object.assign({}, EventEmitter.prototype, {
         // Locate the script and run it
         MazePathController.clearTimeout();    
         MazePathController.clearCanvas();
+        this.resetSteps();
         currentScript = scriptName;
 
         this.resetControllerAndWalker(pathCtx);
