@@ -1,7 +1,7 @@
 #selector-modules {
     position: absolute;
     top: 50px;
-    left: 500px;
+    left: 510px;
     .selector {
         width: 250px;
         &:first-of-type {
@@ -20,30 +20,13 @@
             background-color: black;
             .selector__value-container {
                 font-family: $pixelFontStack;
-                .selector__placeholder {
-                    color: #2B2B2A;
-                }
-                &.selector__value-container--has-value .selector__single-value {
-                    color: white;
-                }
             }
         }
-        .selector__menu {
-            background-color: black;
-            color: white;
+        .selector__menu .selector__menu-list .selector__option {
             font-family: $pixelFontStack;
-            .selector__menu-list {
-                .selector__option {
-                    &.selector__option--is-focused {
-
-                    }
-                    &.selector__option--is-selected {
-                        background-color: white;
-                        color: black;
-                    }
-                }
-            }
         }
+            
+        
     }
 }
 

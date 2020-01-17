@@ -3,7 +3,8 @@
 
 // Base / Variables
 @import 'base/fonts.scss';
-@import 'partials/variables';
+@import 'partials/variables.scss';
+@import 'base/mixins.scss';
 @import 'base/animations.scss';
 
 // Components
@@ -12,6 +13,8 @@
 @import 'partials/components/maze.scss';
 @import 'partials/components/selectors.scss';
 @import 'partials/components/steps-display.scss';
+@import 'partials/components/buttons.scss';
+
 
 
 
@@ -27,6 +30,10 @@ html, body {
 body > div {
   height: 100%;
   -webkit-overflow-scrolling: touch;
+}
+
+.hidden {
+  display: none;
 }
 
 
