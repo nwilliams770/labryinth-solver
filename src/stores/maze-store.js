@@ -47,7 +47,8 @@ const MazeStore = Object.assign({}, EventEmitter.prototype, {
         MazeStore.emitCustomEvent('sorcerer--trigger');
         maze = MazeGenerator.initialize(mazeCtx, defaultCellSelectionMethod, mazeConfig);
         mazeConfig.maze = maze;
-        console.log("maze!", maze)
+        console.log("maze!", maze);
+        MazeGenerator.drawMazeNew(maze);
         // MazeStore.emitChange(); not needed as we're not changing maze size
     },
     savePathContext: function(context) {
@@ -67,6 +68,8 @@ const MazeStore = Object.assign({}, EventEmitter.prototype, {
     },
     recordSteps: function () {
         recordedSteps[currentScript] = steps;
+        currentScript = ""; // reset currentScript so that we have some sort of flag for destroying walls,
+                            // If someone tries to destroy a wall and there's a currentScript, block it!
     },
     iterateSteps: function() {
         steps++;
@@ -78,7 +81,10 @@ const MazeStore = Object.assign({}, EventEmitter.prototype, {
     },
     resetRecordedSteps: function () {
         recordedSteps = {};
-        MazeStore.emitCustomEvent("steps--maze-solved");
+        MazeStore.emitCustomEvent("recorded-steps--change");
+    },
+    scriptRunning: function () {
+        return currentScript;
     },
     _redrawMaze: function(cellSelectionMethod) {
         MazePathController.clearTimeout();                    
@@ -87,10 +93,12 @@ const MazeStore = Object.assign({}, EventEmitter.prototype, {
         mazeConfig.maze = maze;
         WalkerManager.updateConfig(mazeConfig);
         MazeStore.resetRecordedSteps();
+        MazeStore.resetSteps();
         MazeStore.emitCustomEvent('sorcerer--trigger');
         MazeStore.emitCustomEvent('alaska--toggle-speech');
         // MazeStore.emitChange(); // to provide mazeConfig to mazeLayer
     },
+
 
     resetControllerAndWalker: function() {
         WalkerManager.initialize(pathCtx, mazeConfig); // reset visited
@@ -104,11 +112,13 @@ const MazeStore = Object.assign({}, EventEmitter.prototype, {
         // Locate the script and run it
         MazePathController.clearTimeout();    
         MazePathController.clearCanvas();
-        this.resetSteps();
+        MazeStore.resetSteps();
         currentScript = scriptName;
 
-        this.resetControllerAndWalker(pathCtx);
+        MazeStore.resetControllerAndWalker();
         MazeStore.emitCustomEvent('alaska--toggle-speech');
+        MazeStore.emitCustomEvent('run-script');
+
 
         // we don't need to re-save the path ctx but because it initializes the walker and controller again, we can just use it;
         // MazePathController.initialize(pathCtx, WalkerManager, mazeConfig); // re-initialize for any potential mazeConfig changes
@@ -119,6 +129,38 @@ const MazeStore = Object.assign({}, EventEmitter.prototype, {
             MazePathController.initializeScript(script.default);
             MazePathController.run();
         });
+    },
+
+    destroyWall: function(numWalls) {
+        if (currentScript) {
+            console.log("script running, return out of destroyWall", currentScript);
+            return;
+        }
+        // Our maze is 20 x 20 but last row and last col are OUTER walls
+        let walls = MazeStore.gatherWalls(maze);
+        let wallIndex;
+
+        for (let i = 0; i < numWalls; i++) {
+            // getRandomIntInclusive
+            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+            wallIndex = Math.floor(Math.random() * walls.length);
+            maze[walls[wallIndex][1]][walls[wallIndex][0]] = 1;
+        }
+        mazeConfig.maze = maze;
+        MazeStore.resetControllerAndWalker();
+        MazeGenerator.drawMazeNew(maze);
+        // re-update walker and whatever else you need to
+    },
+    gatherWalls: function (mazeModel) {
+        let walls = [];
+        for (let y = 0; y < mazeModel.length - 1; y++) {
+            for (let x = 0; x < mazeModel.length - 1; x++) {
+                if (mazeModel[y][x] == 0) {
+                    walls.push([x, y]);
+                }
+            }
+        }
+        return walls;
     }
 });
 
@@ -134,6 +176,9 @@ MazeStore.dispatchToken = AppDispatcher.register(function (action) {
             break;
         case "ITERATE_STEPS":
             MazeStore.iterateSteps();
+            break;
+        case "DESTROY_WALL":
+            MazeStore.destroyWall(action.data);
             break;
         default:
     };

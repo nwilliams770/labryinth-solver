@@ -60,6 +60,20 @@ export const MazeGenerator = {
         return this.map;
         
     },
+    drawMazeNew: function (mazeModel) {
+        for (let y = 0; y < mazeModel.length; y++) {
+            for (let x = 0; x < mazeModel[y].length; x++) {
+                if (mazeModel[y][x] === 1) {
+                    this.ctx.fillStyle = "orange";
+                    
+                    this.ctx.fillRect(x/2 * (this.mazeConfig.pathWidth + this.mazeConfig.wall) + this.mazeConfig.wall, y/2 * (this.mazeConfig.pathWidth + this.mazeConfig.wall) + this.mazeConfig.wall, this.mazeConfig.pathWidth, this.mazeConfig.pathWidth);
+                    // this.ctx.fillRect(x/2 * (this.mazeConfig.pathWidth + this.mazeConfig.wall) + this.mazeConfig.offset, y/2 * (this.mazeConfig.pathWidth + this.mazeConfig.wall) + this.mazeConfig.offset, this.mazeConfig.pathWidth, this.mazeConfig.pathWidth);
+                }
+            }
+        }
+
+
+    },
     _growTree: function (ctx, map, startingX, startingY, cellSelectionMethod, mazeConfig) {
         let activeCells = [[startingX, startingY]],
             index,
