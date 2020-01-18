@@ -61,7 +61,13 @@ export const MazePathController = {
             this.algo.solve();
             MazeStore.recordSteps();
             MazeStore.resetSteps();
-            MazeStore.emitCustomEvent('steps--maze-solved');
+            MazeStore.emitCustomEvent('recorded-steps--change');
+
+            // To do: consolidate these two
+            MazeStore.emitCustomEvent('alaska--maze-solved');
+            MazeStore.emitCustomEvent('maze-solved');
+
+
 
 
         }

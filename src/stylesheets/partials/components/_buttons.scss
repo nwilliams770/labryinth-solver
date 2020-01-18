@@ -1,0 +1,47 @@
+.wall-destroy-buttons {
+    position: absolute; 
+    top: 30px;
+    left: 80px;
+    font-family: $pixelFontStack;
+    color: white;
+    .header {
+        font-size: 10px;
+        line-height: 14px;
+        margin-bottom: 5px;
+        &.small {
+            font-size: 8px;
+            line-height: 8px;
+        }
+    }
+    .button-container {
+        @include horizontal-flex;
+        .button {
+            @include horizontal-flex;
+            align-items: center;
+            height: 30px;
+            padding: 4px 15px;
+            border-radius: 5px;
+            background-color: black;
+            img {
+                width: 25px;
+                height: auto;
+            }
+            p {
+                font-family: $pixelFontStack;
+                font-size: 10px;
+                color: white;
+            }
+
+            &.x1 {
+                margin-right: 5px;
+            }
+
+            &.disabled {
+                opacity: 0.5;
+                &:hover {
+                    cursor: default;
+                }
+            }
+        }
+    }
+}
