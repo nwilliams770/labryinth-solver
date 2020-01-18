@@ -21,7 +21,7 @@ const LabelKey = {
 const RecordedStep = ({script, steps}) => {
     return (
         <div className="recorded-step">
-            <p><span className="label">{LabelKey[script]}</span>{steps}</p>
+            <p>{steps}<span className="label">{LabelKey[script]}</span></p>
         </div>
     )
 };
@@ -44,6 +44,7 @@ const StepsDisplay = () => {
 
     const handleMazeSolvedEvent = () => {
         // processRecordedSteps(getRecordedSteps());
+        console.log("firing mazesolved event!");
         updateRecordedSteps(getRecordedSteps());
     }
 
@@ -60,20 +61,21 @@ const StepsDisplay = () => {
         // Listen to mazesolved so we know to add the steps to our state
 
         MazeStore.addCustomEventListener("steps--change", handleIterateEvent);
-        MazeStore.addCustomEventListener("steps--maze-solved", handleMazeSolvedEvent);
+        MazeStore.addCustomEventListener("recorded-steps--change", handleMazeSolvedEvent);
         return () => {
             MazeStore.removeCustomEventListener("steps--change", handleIterateEvent);
-            MazeStore.removeCustomEventListener("steps--maze-solved", handleMazeSolvedEvent);
+            MazeStore.removeCustomEventListener("recorded-steps--change", handleMazeSolvedEvent);
         }
-    })
+    }, [])
     return (
         <div id="steps-display">
-            <p className={steps.length > 0 ? "" : "hidden"}>{steps}</p>
+            <h4>iterations</h4>
+            <p className={"current " + (steps ? "" : "hidden")}>{steps}</p>
+            <div className="recorded-steps-container">
+                {processRecordedSteps(recordedSteps)}
+            </div>
             {/* {console.log("recordedSteps", recordedSteps)}
             {console.log("recordedSteps--PROCESSED", processRecordedSteps(recordedSteps))} */}
-            <>
-            {processRecordedSteps(recordedSteps)}
-            </>
         </div>
     )
 }
