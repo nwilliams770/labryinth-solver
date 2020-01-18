@@ -49,6 +49,9 @@ const WalkerManager = {
         
         // Set starting point
         this.visited[this.y][this.x] = 1;
+        // this.x = 1;
+        // this.y = 2;
+        // this.draw(1, 1, "yellow");
     },
 
     draw: function(prevX, prevY, shade) {
