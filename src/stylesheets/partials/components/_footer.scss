@@ -1,0 +1,49 @@
+#footer {
+    #about {
+        position: absolute;
+        bottom: 20px;
+        left: 30px;
+        .trigger {
+            img {
+                width: 40px;
+                height: auto;
+            }
+            &:hover {
+                cursor: pointer;
+            }
+        }
+
+    }
+
+    #contact {
+        @include horizontal-flex;
+        width: 1000px;
+        position: absolute;
+        bottom: -58px;
+        justify-content: space-between;
+        padding: 0 30px;
+        box-sizing: border-box;
+        p {
+            font-family: $karlaFontStack;
+            font-size: 14px;
+            color: #cccccc;
+            a {
+                font-weight: bold;
+            }
+        }
+        #icons {
+            @include horizontal-flex;
+            #github img {
+                width: 50px;
+                height: auto;
+                margin-right: 10px;
+            }
+    
+            #linkedin img {
+                width: 38px;
+                height: auto;
+                margin-top: 6px;
+            }
+        }
+    }
+}
