@@ -115,8 +115,6 @@ const MazeStore = Object.assign({}, EventEmitter.prototype, {
         MazeStore.emitCustomEvent("recorded-steps--change");
     },
     destroyWall: function(numWalls) {
-        if (currentScript) return;
-
         let walls = MazeStore.gatherWalls(maze);
         let wallIndex;
 
@@ -143,10 +141,6 @@ const MazeStore = Object.assign({}, EventEmitter.prototype, {
             }
         }
         return walls;
-    },
-// Scripts-related
-    scriptRunning: function () {
-        return currentScript;
     },
     _runSolverScript: function(scriptName) {
         // Stop any currently running scripts
