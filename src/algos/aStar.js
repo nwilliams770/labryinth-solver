@@ -1,5 +1,5 @@
-import MazePathController from '../../controller/mazeController';
-import * as ActionCreator from '../../actions/action-creator';
+import MazePathController from '../controller/mazeController';
+import * as ActionCreator from '../actions/action-creator';
 
 
 const aStar = {

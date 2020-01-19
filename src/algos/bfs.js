@@ -1,5 +1,5 @@
-import MazeStore from '../../stores/maze-store';
-import MazePathController from '../../controller/mazeController';
+import MazeStore from '../stores/maze-store';
+import MazePathController from '../controller/mazeController';
 
 const bfs = {
     // Walker will track:
