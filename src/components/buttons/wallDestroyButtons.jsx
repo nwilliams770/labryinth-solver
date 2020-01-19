@@ -8,16 +8,11 @@ import MazeStore from '../../stores/maze-store';
 const WallDestroyButtons = () => {
     const [buttonsEnabled, enableButtons] = useState(true);
 
-    const scriptRunning = function () {
-        return MazeStore.scriptRunning() ? true : false;
-    }
-
     const handleRunScriptEvent = () => {
         enableButtons(false);
     }
 
     const handleMazeSolvedEvent = () => {
-        console.log("maze solved event in wall destroy");
         enableButtons(true);
     }
 
@@ -41,7 +36,9 @@ const WallDestroyButtons = () => {
         icon: timesOneIcon,
         copy: "x1",
         handleClick: (type) => {
-            ActionCreator.destroyWall(type);
+            if (buttonsEnabled) {
+                ActionCreator.destroyWall(type);
+            }
         }
     };
 
@@ -50,7 +47,20 @@ const WallDestroyButtons = () => {
         icon: timesFiveIcon,
         copy: "x5",
         handleClick: (type) => {
-            ActionCreator.destroyWall(type);
+            if (buttonsEnabled) {
+                ActionCreator.destroyWall(type);
+            }
+        }
+    };
+
+    const timesFiftyConfig = {
+        type: 50,
+        icon: timesFiveIcon,
+        copy: "x50",
+        handleClick: (type) => {
+            if (buttonsEnabled) {
+                ActionCreator.destroyWall(type);
+            }
         }
     };
 
@@ -61,6 +71,8 @@ const WallDestroyButtons = () => {
             <div className="button-container">
                 <Button config={timesOneConfig} enabled={buttonsEnabled}/>
                 <Button config={timesFiveConfig} enabled={buttonsEnabled}/>
+                <Button config={timesFiftyConfig} enabled={buttonsEnabled}/>
+
             </div>
 
         </div>
