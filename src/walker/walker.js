@@ -34,26 +34,26 @@ const WalkerManager = {
         this.ctx.lineCap = "square";
         this.ctx.lineWidth = mazeConfig.pathWidth;
         
-        // Set visited to all zeroes
-		for (let y = 0; y < mazeConfig.maze.length; y++) {
-			for (let x = 0; x < mazeConfig.maze.length; x++) {
+        this.generateVistedTilesModel();
+    },
+    generateVistedTilesModel: function () {
+        // Clear visited
+		for (let y = 0; y < this.mazeConfig.maze.length; y++) {
+			for (let x = 0; x < this.mazeConfig.maze.length; x++) {
 				this.visited[y][x] = 0;
 			}
         }
 
-        for (let y = 0; y < mazeConfig.maze.length; y++) {
-            for (let x = 0; x < mazeConfig.maze.length; x++) {
-                mazeConfig.maze[y][x] === 0 ? this.maze[y][x] = "*" : this.maze[y][x] = 0;
+        // Add walls
+        for (let y = 0; y < this.mazeConfig.maze.length; y++) {
+            for (let x = 0; x < this.mazeConfig.maze.length; x++) {
+                this.mazeConfig.maze[y][x] === 0 ? this.maze[y][x] = "*" : this.maze[y][x] = 0;
             }
         }
-        
+
         // Set starting point
         this.visited[this.y][this.x] = 1;
-        // this.x = 1;
-        // this.y = 2;
-        // this.draw(1, 1, "yellow");
     },
-
     draw: function(prevX, prevY, shade) {
         this.ctx.strokeStyle = shade;
         this.ctx.beginPath();
@@ -182,8 +182,8 @@ const WalkerManager = {
     },
 
     updateConfig: function(mazeConfig) {
-        this.initialize(this.ctx, mazeConfig);
-        
+        this.mazeConfig = mazeConfig;
+        this.generateVistedTilesModel();
     },
 
     _canMoveWithTremaux: function(x, y) {

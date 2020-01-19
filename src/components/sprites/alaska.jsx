@@ -69,7 +69,6 @@ const Alaska = () => {
                 if (rate === 0) {
                     let currentSpeechIndex = speeches.indexOf(currentSpeech);
                     changeSpeech(speeches[getRandomArbitraryExlusive(0, speeches.length - 2, currentSpeechIndex)]);
-                    // toggleSpeech(prevState => !prevState); // show speech
                     toggleSpeech(true);
                 }
             }
@@ -230,7 +229,6 @@ const Alaska = () => {
     }
 
     const handleMazeSolvedEvent = function() {
-        console.log("mazeSolved event fired!");
         changeSpeech(speeches[speeches.length - 1])
         toggleSpeech(true);
         pauseAnimation(true);
@@ -238,10 +236,6 @@ const Alaska = () => {
     };
 
     const handleToggleSpeechEvent = function() { 
-        console.log("we had a maze generation event!");
-        console.log("pauseRef.current", pauseRef.current);
-        console.log("speechVisible", speechVisible);
-        console.log("speechVisibleRef.current", speechVisibleRef.current);
         // If paused, it means maze was previously solved 
         if (pauseRef.current) {
             if (speechVisibleRef.current) toggleSpeech(false);
@@ -274,14 +268,14 @@ const Alaska = () => {
     }
 
     useEffect(() => {
-        MazeStore.addCustomEventListener('alaska--maze-solved', handleMazeSolvedEvent);
-        MazeStore.addCustomEventListener('alaska--toggle-speech', handleToggleSpeechEvent);
+        MazeStore.addCustomEventListener('maze-solved', handleMazeSolvedEvent);
+        MazeStore.addCustomEventListener('sprite-alaska--toggle-speech-visibility', handleToggleSpeechEvent);
         setTimeout(function () {
             loopAnimation(true, false, animation);
         }, 1000);
         return () => {
-            MazeStore.removeCustomEventListener('alaska--maze-solved', handleMazeSolvedEvent);
-            MazeStore.removeCustomEventListener('alaska--toggle-speech', handleToggleSpeechEvent);
+            MazeStore.removeCustomEventListener('maze-solved', handleMazeSolvedEvent);
+            MazeStore.removeCustomEventListener('sprite-alaska--toggle-speech-visibility', handleToggleSpeechEvent);
         }
     }, []);
 

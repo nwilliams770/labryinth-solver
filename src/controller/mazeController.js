@@ -23,9 +23,6 @@ export const MazePathController = {
         this.algo = algo;
         algo.initialize(this.ctx, this.walker, this.mazeConfig);
     },
-
-
-
     clearTimeout: function() {
         // if (this.timeoutId) {
         //     clearTimeout(this.timeoutId);

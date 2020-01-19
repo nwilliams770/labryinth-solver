@@ -31,8 +31,7 @@ let maze = [],
 
 
 const MazeStore = Object.assign({}, EventEmitter.prototype, {
-
-
+// Events-related
     addCustomEventListener: function(eventLabel, callback) {
         this.on(eventLabel, callback);
     },
@@ -42,20 +41,52 @@ const MazeStore = Object.assign({}, EventEmitter.prototype, {
     emitCustomEvent: function(eventLabel) {
         this.emit(eventLabel);
     },
-    generateInitialMaze: function(context) {
-        mazeCtx = context;
-        MazeStore.emitCustomEvent('sorcerer--trigger');
-        maze = MazeGenerator.initialize(mazeCtx, defaultCellSelectionMethod, mazeConfig);
-        mazeConfig.maze = maze;
-        console.log("maze!", maze);
-        MazeGenerator.drawMazeNew(maze);
-        // MazeStore.emitChange(); not needed as we're not changing maze size
+    saveCanvasContexts: function({pathContext, mazeContext}) {
+        pathCtx = pathContext;
+        mazeCtx = mazeContext;
     },
-    savePathContext: function(context) {
-        pathCtx = context;
+// Maze-related
+    createMaze: function (cellSelectionMethod = defaultCellSelectionMethod) {
+        MazeStore.emitCustomEvent('sprite-sorcerer--animate');
+
+        // ** Future feature
+            // Initialize MazeGenerator, in theory if we were to ever update the mazeConfig
+            // e.g. resize the maze, potential feature?
+        MazeGenerator.initialize(mazeCtx, mazeConfig);
+
+        // Note: maybe redundant we store a maze & mazeConfig.maze
+        //       probably store everything in the config
+        maze = MazeGenerator.generateMazeModel(cellSelectionMethod);
+        mazeConfig.maze = maze;
+        MazeGenerator.drawMaze(maze);
+        MazeStore.provideContextsAndMazeModel();
+    },
+    _redrawMaze: function(cellSelectionMethod) {
+        // Emit sprite events
+        MazeStore.emitCustomEvent('sprite-sorcerer--animate');
+        MazeStore.emitCustomEvent('sprite-alaska--toggle-speech-visibility');
+    
+        // Clear any potentially running scripts, including saved/recording steps
+        MazePathController.clearTimeout();                    
+        MazePathController.clearCanvas();
+        MazeStore._resetRecordedSteps();
+        MazeStore.resetSteps();
+
+        // Save new maze model, provide walker with updated maze model
+        maze = MazeGenerator.generateMazeModel(cellSelectionMethod);
+        mazeConfig.maze = maze;
+        MazeGenerator.drawMaze(maze);
+        WalkerManager.updateConfig(mazeConfig);
+
+        // ** Future feature:
+            // emit an event to provide an updated mazeConfig to mazeLayer, in case of resizing of maze
+            // MazeStore.emitChange(); // to provide mazeConfig to mazeLayer
+    },
+    provideContextsAndMazeModel: function () {
         WalkerManager.initialize(pathCtx, mazeConfig);
         MazePathController.initialize(pathCtx, WalkerManager, mazeConfig);
     },
+
     getMazeConfig: function() {
         return mazeConfig;
     },
@@ -79,64 +110,13 @@ const MazeStore = Object.assign({}, EventEmitter.prototype, {
         steps = 0;
         MazeStore.emitCustomEvent("steps--change");
     },
-    resetRecordedSteps: function () {
+    _resetRecordedSteps: function () {
         recordedSteps = {};
         MazeStore.emitCustomEvent("recorded-steps--change");
     },
-    scriptRunning: function () {
-        return currentScript;
-    },
-    _redrawMaze: function(cellSelectionMethod) {
-        MazePathController.clearTimeout();                    
-        MazePathController.clearCanvas(); 
-        maze = MazeGenerator.redrawMaze(cellSelectionMethod);
-        mazeConfig.maze = maze;
-        WalkerManager.updateConfig(mazeConfig);
-        MazeStore.resetRecordedSteps();
-        MazeStore.resetSteps();
-        MazeStore.emitCustomEvent('sorcerer--trigger');
-        MazeStore.emitCustomEvent('alaska--toggle-speech');
-        // MazeStore.emitChange(); // to provide mazeConfig to mazeLayer
-    },
-
-
-    resetControllerAndWalker: function() {
-        WalkerManager.initialize(pathCtx, mazeConfig); // reset visited
-        MazePathController.initialize(pathCtx, WalkerManager, mazeConfig); // re-initialize for any potential mazeConfig changes
-    },
-
-    _runSolverScript: function(scriptName) {
-        // Stop any currently running scripts
-        // Clear the pathCtx
-        // Initialize the Controller (for any potential changes to mazeConfig)
-        // Locate the script and run it
-        MazePathController.clearTimeout();    
-        MazePathController.clearCanvas();
-        MazeStore.resetSteps();
-        currentScript = scriptName;
-
-        MazeStore.resetControllerAndWalker();
-        MazeStore.emitCustomEvent('alaska--toggle-speech');
-        MazeStore.emitCustomEvent('run-script');
-
-
-        // we don't need to re-save the path ctx but because it initializes the walker and controller again, we can just use it;
-        // MazePathController.initialize(pathCtx, WalkerManager, mazeConfig); // re-initialize for any potential mazeConfig changes
-
-        // Formatting the script path here instead of in a new method because of webpack
-        // https://github.com/webpack/webpack/issues/6680
-        import("../scripts/algos/" + scriptName + ".js").then((script) => {
-            MazePathController.initializeScript(script.default);
-            MazePathController.run();
-        });
-    },
-
     destroyWall: function(numWalls) {
-        if (currentScript) {
-            console.log("script running, return out of destroyWall", currentScript);
-            return;
-        }
-        // Our maze is 20 x 20 but last row and last col are OUTER walls
+        if (currentScript) return;
+
         let walls = MazeStore.gatherWalls(maze);
         let wallIndex;
 
@@ -147,12 +127,14 @@ const MazeStore = Object.assign({}, EventEmitter.prototype, {
             maze[walls[wallIndex][1]][walls[wallIndex][0]] = 1;
         }
         mazeConfig.maze = maze;
-        MazeStore.resetControllerAndWalker();
-        MazeGenerator.drawMazeNew(maze);
+        // MazeStore.provideContextsAndMazeModel();
+        WalkerManager.updateConfig(mazeConfig);
+        MazeGenerator.drawMaze(maze);
         // re-update walker and whatever else you need to
     },
     gatherWalls: function (mazeModel) {
         let walls = [];
+        // Our maze is 20 x 20 but last row and last col are OUTER walls so need to account for
         for (let y = 0; y < mazeModel.length - 1; y++) {
             for (let x = 0; x < mazeModel.length - 1; x++) {
                 if (mazeModel[y][x] == 0) {
@@ -161,6 +143,39 @@ const MazeStore = Object.assign({}, EventEmitter.prototype, {
             }
         }
         return walls;
+    },
+// Scripts-related
+    scriptRunning: function () {
+        return currentScript;
+    },
+    _runSolverScript: function(scriptName) {
+        // Stop any currently running scripts
+        // Clear the pathCtx
+        // Initialize the Controller (for any potential changes to mazeConfig)
+        // Locate the script and run it
+
+        // Stop and clear any currently running scripts
+        MazePathController.clearTimeout();    
+        MazePathController.clearCanvas();
+
+        // Reset any steps that were being recorded, re-provide Contexts to reset visited
+        MazeStore.resetSteps();
+        MazeStore.provideContextsAndMazeModel();
+
+        currentScript = scriptName;
+        MazeStore.emitCustomEvent('sprite-alaska--toggle-speech-visibility');
+        MazeStore.emitCustomEvent('run-script');
+
+
+        // we don't need to re-save the path ctx but because it initializes the walker and controller again, we can just use it;
+        // MazePathController.initialize(pathCtx, WalkerManager, mazeConfig); // re-initialize for any potential mazeConfig changes
+
+        // Formatting the script path here instead of in a new method because of webpack
+        // https://github.com/webpack/webpack/issues/6680
+        import("../algos/" + scriptName + ".js").then((script) => {
+            MazePathController.initializeScript(script.default);
+            MazePathController.run();
+        });
     }
 });
 

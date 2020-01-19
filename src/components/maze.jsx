@@ -26,17 +26,12 @@ class Maze extends React.Component {
     };
 
     componentDidMount() {
-        // MazeStore.addChangeListener(this.onChange); // Don't think we even need this anymore, we're not changing the size of the maze
-        MazeStore.generateInitialMaze(this._mazeCtx);
-        MazeStore.savePathContext(this._pathCtx); 
+        MazeStore.saveCanvasContexts({pathContext: this._pathCtx, mazeContext: this._mazeCtx});
+        MazeStore.createMaze();
         // We aren't doing any component-level interactins with the store that would provide the ctx so we can have to manually provide it
         // we may not even need this line since MazeStore is emitting a chance once the maze is drawn     
         //  WalkerManager.initialize(this._pathCtx, this.state.mazeConfig); 
     };
-
-    // componentWillUnmount() {
-    //     MazeStore.removeChangeListener(this.onChange);
-    // };
 
     // No binding required
     saveContext = (ctx, label) => {
