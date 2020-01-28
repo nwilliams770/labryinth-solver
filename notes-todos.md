@@ -1,7 +1,6 @@
 
 <!-- TO DOs -->
 <!--  
-    - A*
     - Iteration counter
         - Add for other algos
         - style
@@ -14,10 +13,14 @@
         - placement of maze
         - styling dropdowns
         - perhaps a larger maze
+        - add labels to each size
+        - info for each algo on what it's good for and diff maze selection styles
     - Info panel // add your name and github somewhere
     - README for github
-
-
+    - sound
+    - BUGS:
+        - Alaska can repeat her phrases, make sure to not select the same one more than once in a row
+        - ALSO, update to have more quotes
 
 
 
