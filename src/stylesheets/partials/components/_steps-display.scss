@@ -1,8 +1,31 @@
 #steps-display {
     position: absolute;
     top: 450px;
-    left: 800px;
+    left: 665px;
     color: white;
     font-family: $pixelFontStack;
     font-size: 14px;
+    @include vertical-flex;
+    align-items: center;
+    flex-direction: column;
+    width: 300px;
+
+    .current, h4 {
+        text-align: center;
+        line-height: 1.6;
+    }
+    .recorded-steps-container {
+        text-align: left;
+        line-height: 1.75;
+        p {
+            @include flex;
+            font-size: 12px;
+            align-items: center;
+            .label {
+                font-size: 10.5px;
+                margin-left: 10px;
+            }
+        }
+
+    }
 }

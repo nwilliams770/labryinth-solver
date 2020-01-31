@@ -5,19 +5,6 @@
 // becomes new active cell
 // Do this with specified cellSelectionMethod until all active cells empty
 
-// SAMPLE MAZE CONFIG
-// const mazeConfig = {
-//     pathWidth: 10, // Width of Maze Paths
-//     wall: 2, // Wall Width (between paths)
-//     outerWall: 2, // Outer wall width
-//     width: 25, // Num paths horizonally
-//     height: 25, // Num paths vertically
-//     wallColor: '#d24', //Color of the walls
-//     pathColor: '#222a33' //Color of the path
-// }
-// mazeConfig.canvasWidth = mazeConfig.outerWall * 2 + (mazeConfig.width * (mazeConfig.pathWidth + mazeConfig.wall)) - mazeConfig.wall;
-// mazeConfig.canvasHeight = mazeConfig.outerWall * 2 + (mazeConfig.height * (mazeConfig.pathWidth + mazeConfig.wall)) - mazeConfig.wall;
-
 export const MazeGenerator = {
     DIRECTIONS: ["N", "S", "E", "W"],
     DX: {"E": 1, "W": -1, "S": 0, "N": 0},
@@ -25,10 +12,9 @@ export const MazeGenerator = {
     map: null,
     offset: null,
 
-    initialize: function (ctx, cellSelectionMethod, mazeConfig) {
+    initialize: function (ctx, mazeConfig) {
         this.ctx = ctx;
         this.mazeConfig = mazeConfig;
-
 
         // Setup canvas
         this.ctx.fillStyle = mazeConfig.wallColor;
@@ -37,72 +23,102 @@ export const MazeGenerator = {
         this.ctx.lineCap = 'square';
         this.ctx.lineWidth = mazeConfig.pathWidth;
         this.ctx.beginPath();
-
+    },
+    generateMazeModel: function (cellSelectionMethod) {
         // starting X,Y 
-        let x = this._getRandomIndex(0, mazeConfig.width - 1), 
-            y = this._getRandomIndex(0, mazeConfig.height - 1);
+        let x = this._getRandomIndex(0, this.mazeConfig.width - 1), 
+            y = this._getRandomIndex(0, this.mazeConfig.height - 1);
 
-        let map = this._createMap(mazeConfig.width, mazeConfig.height);
+        this.mazeModel = this._createMap(this.mazeConfig.width, this.mazeConfig.height);
         
-        this._growTree(ctx, map, x, y, cellSelectionMethod, mazeConfig)
-        return this.map;
+        this._growTree(this.mazeModel, x, y, cellSelectionMethod);
 
+        return this.mazeModel;
+    },
+    drawMaze: function (mazeModel) {
+        this._clearCanvas();
+
+        for (let y = 0; y < mazeModel.length; y++) {
+            for (let x = 0; x < mazeModel[y].length; x++) {
+                if (mazeModel[y][x] === 1) {
+                    this.ctx.fillStyle = this.mazeConfig.pathColor;
+                    
+                    this.ctx.fillRect(x/2 * (this.mazeConfig.pathWidth + this.mazeConfig.wall) + this.mazeConfig.wall, y/2 * (this.mazeConfig.pathWidth + this.mazeConfig.wall) + this.mazeConfig.wall, this.mazeConfig.pathWidth, this.mazeConfig.pathWidth);
+                    // this.ctx.fillRect(x/2 * (this.mazeConfig.pathWidth + this.mazeConfig.wall) + this.mazeConfig.offset, y/2 * (this.mazeConfig.pathWidth + this.mazeConfig.wall) + this.mazeConfig.offset, this.mazeConfig.pathWidth, this.mazeConfig.pathWidth);
+                }
+            }
+        }
+        this._drawEntraceExit();
     },
     // Redraws the maze under the assumption initialize has already been called e.g. we have a mazeConfig & ctx
     redrawMaze: function (newCellSelectionMethod) {
-        // reset canvas
-        this.ctx.fillRect(0,0,this.mazeConfig.canvasWidth,this.mazeConfig.canvasHeight);
+        this._clearCanvas();
         // starting X,Y 
         let x = this._getRandomIndex(0, this.mazeConfig.width - 1), 
             y = this._getRandomIndex(0, this.mazeConfig.height - 1),
             map = this._createMap(this.mazeConfig.width, this.mazeConfig.height);
-        this._growTree(this.ctx, map, x, y, newCellSelectionMethod, this.mazeConfig);
-        return this.map;
-        
+        this._growTree(map, x, y, newCellSelectionMethod);
+        return this.mazeModel;
+    
     },
-    _growTree: function (ctx, map, startingX, startingY, cellSelectionMethod, mazeConfig) {
-        let activeCells = [[startingX, startingY]],
+    _growTree: function (mazeModel, startingX, startingY, cellSelectionMethod) {
+        let activeCellStackX = [startingX],
+            activeCellStackY = [startingY],
+            activeStackSize = 1,
             index,
             x,
             y,
             validDirection;
 
-        map[startingY * 2][startingX * 2] = 1;
+        mazeModel[startingY * 2][startingX * 2] = 1;
 
-        while (activeCells.length > 0) {
-            index = this._nextIndex(activeCells.length, cellSelectionMethod);
-            x = activeCells[index][0];
-            y = activeCells[index][1];
-            ctx.moveTo(x * (mazeConfig.pathWidth + mazeConfig.wall) + mazeConfig.offset, y * (mazeConfig.pathWidth + mazeConfig.wall) + mazeConfig.offset);
+        while (activeStackSize > 0) {
+            index = this._nextIndex(activeStackSize, cellSelectionMethod);
+            x = activeCellStackX[index];
+            y = activeCellStackY[index];
 
-
-            validDirection = this._validNeighborCell(map, x, y);
+            validDirection = this._exploreNeighborCells(mazeModel, x, y);
             if (validDirection) {
-                // add the newly traversed cell to the stack
-                activeCells.push([this.DX[validDirection] + x, this.DY[validDirection] + y]);
+                // Add the valid cell to the stack
+                // activeCellsStack.push([this.DX[validDirection] + x, this.DY[validDirection] + y]);
+                activeCellStackX.push(this.DX[validDirection] + x);
+                activeCellStackY.push(this.DY[validDirection] + y)
+                activeStackSize++;
 
-                // Mark the map
-                map[(this.DY[validDirection]+y)*2][(this.DX[validDirection]+x)*2] = 1;
-                map[this.DY[validDirection]+y*2][this.DX[validDirection]+x*2] = 1;
-                
-                // Draw the line and move pointer to new cell
-                this._drawTo(ctx, 
-                            (this.DX[validDirection] + x) * (mazeConfig.pathWidth + mazeConfig.wall) + mazeConfig.offset, 
-                            (this.DY[validDirection] + y) * (mazeConfig.pathWidth + mazeConfig.wall) + mazeConfig.offset)
+
+                // Mark the mazeModel, multiplying by 2 to compensate for double-sizing of mazeModel
+                mazeModel[(this.DY[validDirection]+y)*2][(this.DX[validDirection]+x)*2] = 1;
+                mazeModel[this.DY[validDirection]+y*2][this.DX[validDirection]+x*2] = 1;
             } else {
               // remove the cell
-              activeCells.splice(index, 1);
+              activeCellStackX.splice(index, 1);
+              activeCellStackY.splice(index, 1);
+              activeStackSize--;
+
             };
         };
 
-        // Draw entrance/exit
-        this.ctx.fillStyle = 'yellow';
-        this.ctx.fillRect(mazeConfig.outerWall,0,mazeConfig.pathWidth,mazeConfig.outerWall);
-        this.ctx.fillRect(mazeConfig.canvasWidth - mazeConfig.outerWall - mazeConfig.pathWidth,mazeConfig.canvasHeight - mazeConfig.outerWall,mazeConfig.pathWidth,mazeConfig.outerWall);
-        this.ctx.fillStyle = mazeConfig.wallColor; // Revert fillStyle for future redraws 
+        this.mazeModel = mazeModel;
+    },
+    // Given a [X, Y], randomly checks each neighbor cell, returning direction code of first valid neighbor
+    // A valid neighbor cell is one that is within bounds and has not been visited previously
+    // If no valid neighbors, returns false
+    _exploreNeighborCells: function (map, x, y) {
+        this.DIRECTIONS = this._shuffle(this.DIRECTIONS);
 
-        this.map = map;
-
+        for (let i = 0; i < this.DIRECTIONS.length; i++) {
+          let dir = this.DIRECTIONS[i],
+              nx = x + this.DX[dir],
+              ny = y + this.DY[dir];
+      
+            if (map[ny * 2] !== undefined &&
+                map[nx * 2] !== undefined &&
+                map[ny * 2][nx * 2] === 0) 
+            {
+                return this.DIRECTIONS[i];
+            };      
+        };
+          return false;
     },
     _createMap: function (width, height) {
         let map = [];
@@ -113,34 +129,6 @@ export const MazeGenerator = {
             }
         }
         return map;
-    },
-    // Checks if there is unvisited neighbor cell given a coordinate and a map
-    // randomly checks each direction, returning the first coordinate group of a valid neighbor cell
-    // if not validneighbor cell is found, false is returned
-    _validNeighborCell: function (map, x, y) {
-        this.DIRECTIONS = this._shuffle(this.DIRECTIONS);
-
-        for (let i = 0; i < this.DIRECTIONS.length; i++) {
-          let dir = this.DIRECTIONS[i],
-              nx = x + this.DX[dir],
-              ny = y + this.DY[dir];
-      
-            // If we are not out of bounds and the cell has not yet been visited
-            if (map[ny * 2] !== undefined &&
-                map[ny * 2][nx * 2]===0) 
-            {
-                return this.DIRECTIONS[i];
-            };
-              // if (nx >= 0 &&
-              //     ny >= 0 &&
-              //     map[ny * 2] !== undefined &&
-              //     map[ny * 2][nx * 2] === 0) {
-              //         console.log("found valid cell!");
-              //         return [nx, ny];
-              //   }
-      
-        };
-          return false;
     },
     _nextIndex: function (length, cellSelectionMethod) {
         switch (cellSelectionMethod) {
@@ -156,11 +144,15 @@ export const MazeGenerator = {
                 break;
         }
     },
-    _drawTo: function (ctx, x, y) {
-        ctx.lineTo(x, y)
-        ctx.stroke();
-        ctx.beginPath();
-
+    _drawEntraceExit: function () {
+        // Draw entrance/exit
+        this.ctx.fillStyle = 'yellow';
+        this.ctx.fillRect(this.mazeConfig.outerWall,0,this.mazeConfig.pathWidth,this.mazeConfig.outerWall);
+        this.ctx.fillRect(this.mazeConfig.canvasWidth - this.mazeConfig.outerWall - this.mazeConfig.pathWidth,this.mazeConfig.canvasHeight - this.mazeConfig.outerWall,this.mazeConfig.pathWidth,this.mazeConfig.outerWall);
+        this.ctx.fillStyle = this.mazeConfig.wallColor; // Revert fillStyle for future redraws 
+    },
+    _clearCanvas: function () {
+        this.ctx.fillRect(0,0,this.mazeConfig.canvasWidth,this.mazeConfig.canvasHeight);
     },
 // Fisher-Yates shuffle
 // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array

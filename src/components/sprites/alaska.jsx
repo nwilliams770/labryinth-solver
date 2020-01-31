@@ -6,7 +6,6 @@ import MazeStore from '../../stores/maze-store';
 function getRandomArbitraryExlusive(min, max, exclusion) {
     let num = Math.floor(Math.random() * (max - min) + min);
  
-
     while (num === exclusion) {
         num = Math.floor(Math.random() * (max - min) + min);
     };
@@ -22,8 +21,6 @@ const speeches = [
     "I don't even know what a warp drive is...",
     "Escaped at last! Time to accost this Maze Wizard and bring his bodacious treasures back to my people!"
 ];
-
-
 
 const Alaska = () => {
     const [xPos, updateXPos] = useState(300);
@@ -69,7 +66,6 @@ const Alaska = () => {
                 if (rate === 0) {
                     let currentSpeechIndex = speeches.indexOf(currentSpeech);
                     changeSpeech(speeches[getRandomArbitraryExlusive(0, speeches.length - 2, currentSpeechIndex)]);
-                    // toggleSpeech(prevState => !prevState); // show speech
                     toggleSpeech(true);
                 }
             }
@@ -187,7 +183,6 @@ const Alaska = () => {
             //    same as   list.map(obj => Object.assign({}, a));
     
         const step = () => {
-            // console.log("calling step, pauseRef.current", pauseRef.current);
             if (pauseRef.current) {
                 _requestAnimationFrame(step);
                 saveLeftoverAnimationTime(animationList);
@@ -230,7 +225,6 @@ const Alaska = () => {
     }
 
     const handleMazeSolvedEvent = function() {
-        console.log("mazeSolved event fired!");
         changeSpeech(speeches[speeches.length - 1])
         toggleSpeech(true);
         pauseAnimation(true);
@@ -238,10 +232,6 @@ const Alaska = () => {
     };
 
     const handleToggleSpeechEvent = function() { 
-        console.log("we had a maze generation event!");
-        console.log("pauseRef.current", pauseRef.current);
-        console.log("speechVisible", speechVisible);
-        console.log("speechVisibleRef.current", speechVisibleRef.current);
         // If paused, it means maze was previously solved 
         if (pauseRef.current) {
             if (speechVisibleRef.current) toggleSpeech(false);
@@ -274,14 +264,14 @@ const Alaska = () => {
     }
 
     useEffect(() => {
-        MazeStore.addCustomEventListener('alaska--maze-solved', handleMazeSolvedEvent);
-        MazeStore.addCustomEventListener('alaska--toggle-speech', handleToggleSpeechEvent);
+        MazeStore.addCustomEventListener('maze-solved', handleMazeSolvedEvent);
+        MazeStore.addCustomEventListener('sprite-alaska--toggle-speech-visibility', handleToggleSpeechEvent);
         setTimeout(function () {
             loopAnimation(true, false, animation);
         }, 1000);
         return () => {
-            MazeStore.removeCustomEventListener('alaska--maze-solved', handleMazeSolvedEvent);
-            MazeStore.removeCustomEventListener('alaska--toggle-speech', handleToggleSpeechEvent);
+            MazeStore.removeCustomEventListener('maze-solved', handleMazeSolvedEvent);
+            MazeStore.removeCustomEventListener('sprite-alaska--toggle-speech-visibility', handleToggleSpeechEvent);
         }
     }, []);
 

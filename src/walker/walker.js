@@ -1,17 +1,4 @@
 import * as ActionCreator from '../actions/action-creator';
-// *** SAMPLE MAZE CONFIG ***
-// const mazeConfig = {
-//     pathWidth: 20,
-//     wall: 4,
-//     outerWall: 4,
-//     width: 10,
-//     height: 10,
-//     wallColor: '#d24',
-//     pathColor: '#222a33'
-//     maze: [],
-// }
-// mazeConfig.canvasWidth = mazeConfig.outerWall * 2 + (mazeConfig.width * (mazeConfig.pathWidth + mazeConfig.wall)) - mazeConfig.wall;
-// mazeConfig.canvasHeight = mazeConfig.outerWall * 2 + (mazeConfig.height * (mazeConfig.pathWidth + mazeConfig.wall)) - mazeConfig.wall;
 
 const WalkerManager = {
     initialize: function(ctx, mazeConfig) {
@@ -23,6 +10,9 @@ const WalkerManager = {
         this.prevX = 0;
         this.prevY = 0;
         this.visited = createArray(mazeConfig.maze.length, mazeConfig.maze.length);
+        this.xStack = [];
+        this.yStack = [];
+        this.stackSize = 0;
         this.shadeMap = {
             1: "#fb50a6",
             2: "#c94085",
@@ -34,23 +24,31 @@ const WalkerManager = {
         this.ctx.lineCap = "square";
         this.ctx.lineWidth = mazeConfig.pathWidth;
         
-        // Set visited to all zeroes
-		for (let y = 0; y < mazeConfig.maze.length; y++) {
-			for (let x = 0; x < mazeConfig.maze.length; x++) {
+        this.generateVistedTilesModel();
+
+        // Set starting point
+        this.visited[this.y][this.x] = 1;
+
+        // Have our stack ready
+        this.xStack.push(this.x);
+        this.yStack.push(this.y);
+        this.stackSize++;
+    },
+    generateVistedTilesModel: function () {
+        // Clear visited
+		for (let y = 0; y < this.mazeConfig.maze.length; y++) {
+			for (let x = 0; x < this.mazeConfig.maze.length; x++) {
 				this.visited[y][x] = 0;
 			}
         }
 
-        for (let y = 0; y < mazeConfig.maze.length; y++) {
-            for (let x = 0; x < mazeConfig.maze.length; x++) {
-                mazeConfig.maze[y][x] === 0 ? this.maze[y][x] = "*" : this.maze[y][x] = 0;
+        // Add walls
+        for (let y = 0; y < this.mazeConfig.maze.length; y++) {
+            for (let x = 0; x < this.mazeConfig.maze.length; x++) {
+                this.mazeConfig.maze[y][x] === 0 ? this.maze[y][x] = "*" : this.maze[y][x] = 0;
             }
         }
-        
-        // Set starting point
-        this.visited[this.y][this.x] = 1;
     },
-
     draw: function(prevX, prevY, shade) {
         this.ctx.strokeStyle = shade;
         this.ctx.beginPath();
@@ -77,17 +75,25 @@ const WalkerManager = {
             prevY = this.y;
         }
     },
-    visitNeighbors: function(x, y) {
+    drawPathFromStack: function () {
+        let path = [];
+        for (let i = 0; i < this.stackSize; i++) {
+            let point = [this.xStack.pop(), this.yStack.pop()];
+            path.unshift(point);
+        }
+        this.drawPath(path);
+    },
+// BFS Related
+    visitAndEnqueueNeighbors: function(x, y) {
         let cellsToEnqueue = [];
-        // set x y to this.x, this.y generate neighbor
+        // set x y to this.x, this.y to get getXYForDirection
         this.x = x;
         this.y = y;
 
 
         for (let i = 0; i < 4; i++) {
             let neighbor = this._getXYForDirection(i);
-            // console.log("i:", i, "from", [prevX, prevY], "=> neighbor", neighbor);
-            if (!this._hasVisited(i) && this._isOpen(neighbor.x, neighbor.y)) {
+            if (!this.outOfBounds(neighbor) && this.isOpen(neighbor) && this._unvisited(neighbor) > 0) {
                 // Update this.x, this.y for this.draw
                 // Add cells to enqueue
                 // Mark visited
@@ -95,6 +101,7 @@ const WalkerManager = {
                 this.y = neighbor.y;
                 this.draw(x, y, this.shadeMap[1]);
                 this.visited[this.y][this.x]++;
+                ActionCreator.iterateSteps();
                 // reset this.x and this.y for next neighbors
                 this.x = x;
                 this.y = y;
@@ -104,7 +111,8 @@ const WalkerManager = {
         return cellsToEnqueue;
 
     },
-    getValidNeighbors: function(x, y) {
+// A* Related
+    getAStarNeighbors: function(x, y) {
         let result = [];
 
         // set x y to this.x, this.y generate neighbor
@@ -115,96 +123,171 @@ const WalkerManager = {
             let neighbor = this._getXYForDirection(i);
             if (neighbor.x >= 0 && 
                 neighbor.y >= 0 && 
-                this._isOpen(neighbor.x, neighbor.y) &&
+                this.isOpen(neighbor) &&
                 !this.visited[neighbor.y][neighbor.x].closed) {
-                    result.push(neighbor);
+                    result.push(this.visited[neighbor.y][neighbor.x]);
             }
         }
         return result;
     },
+// Wall Follower
     moveWithWall: function(point) {
         let prevX = this.x,
             prevY = this.y;
-        this.x = point[0];
-        this.y = point[1];
+        this.x = point.x;
+        this.y = point.y;
         let shade = this.visited[this.y][this.x] > 0 ? this.shadeMap[2] : this.shadeMap[1];
         this.draw(prevX, prevY, shade);
         this.visited[this.y][this.x]++;
+        ActionCreator.iterateSteps();
 
+
+        if (this.visited[this.y][this.x] !== 1) {
+            this.xStack.pop();
+            this.yStack.pop();
+            this.stackSize--;
+        } else {
+            this.xStack.push(point.x);
+            this.yStack.push(point.y);
+            this.stackSize++;
+
+        }
+    },
+// Tremaux
+    // Given a point, check for any adjaceent unvisited paths
+    findOpenPath: function (x, y) {
+        let neighbors = [];
+
+        // set x y to this.x, this.y generate neighbor
+        this.x = x;
+        this.y = y;
+
+        for (let i = 0; i < 4; i++) {
+            let neighbor = this._getXYForDirection(i);
+            if (neighbor.x >= 0 && 
+                neighbor.y >= 0 && 
+                this.isOpen(neighbor) &&
+                this.visited[neighbor.y][neighbor.x] === 0) {
+                    neighbors.push(neighbor);
+            }
+        }
+        return neighbors.length > 0 ? true : false;
+
+    },
+    backtrackWithTremaux: function () {
+        let foundOpenPath = false,
+            prevX = this.x,
+            prevY = this.y;
+
+        // If we are backtracking, make sure do not go to our current tile again, e.g. the one where we got stuck
+        // So iterate it to 2
+        this.visited[this.y][this.x]++;
+
+        // Move to previous tile and draw to it and visit it
+        let point = {x: this.xStack.pop(), y: this.yStack.pop()};
+        this.stackSize--;
+        prevX = this.x;
+        prevY = this.y;
+        this.x = point.x;
+        this.y = point.y;
+        this.draw(prevX, prevY, this.shadeMap[2]);
+        this.visited[this.y][this.x]++;
+        ActionCreator.iterateSteps();
+
+        // If we can find an open path at this point, set it to 1 so we can backtrack on it
+        // If we've found an open path while backtracking, 
+        if (this.findOpenPath(point.x, point.y)) {
+            foundOpenPath = true;
+            this.visited[point.y][point.x]--;
+            this.xStack.push(point.x);
+            this.yStack.push(point.y);
+            this.stackSize++;
+        }
+        return foundOpenPath;
     },
     moveWithTremaux: function(direction, backtrack) {
         let movedToNewTile = false,
             prevX = this.x,
-            prevY = this.y;
+            prevY = this.y,
+            point = this._getXYForDirection(direction);
 
-        // if we are backtracking OR if we haven't visited the next tile with the current direction
-        if (backtrack || !this._hasVisited(direction)) {
-            // Get the new x,y for the potential move.
-            let point = this._getXYForDirection(direction);
-            // Check if this move is valid // if it is then update our walker position
-            if (this._canMoveWithTremaux(point.x, point.y)) {
-                // console.log("can move to point! updating this.x to X", point.x, "this.y to Y", point.y, "movedToNewTile set to true");
+        if (this.outOfBounds(point) || !this.isOpen(point))  return movedToNewTile 
+
+        if (backtrack) {
+            // If we are backtracking, do not go to our current tile again, e.g. iterate it to 2
+            this.visited[this.y][this.x]++;
+
+            // Move to previous tile and draw to it
+            point = Object.assign(point, {x: this.xStack.pop(), y: this.yStack.pop()});
+            this.stackSize--;
+            prevX = this.x;
+            prevY = this.y;
+            this.x = point.x;
+            this.y = point.y;
+            this.draw(prevX, prevY, this.shadeMap[2]);
+            this.visited[this.y][this.x]++;
+            ActionCreator.iterateSteps();
+
+
+            // If we can find an open path at this point, set it to 1 so we can backtrack on it
+            if (this.findOpenPath(point.x, point.y)) {
+                movedToNewTile = true;
+                this.visited[point.y][point.x]--;
+                this.xStack.push(point.x);
+                this.yStack.push(point.y);
+                this.stackSize++;
+            }
+        } else {
+            // check if our point is valid/ not visited
+            if (this._unvisited(point) && this._canMoveWithTremaux(point)) {
                 this.x = point.x;
                 this.y = point.y;
+                this.prevX = prevX;
+                this.prevY = prevY;
+                this.draw(prevX, prevY, this.shadeMap[1]);
+                this.xStack.push(this.x);
+                this.yStack.push(this.y);
+                this.stackSize++;
+                this.visited[this.y][this.x]++;
                 movedToNewTile = true;
-            }
-        }
-
-        if (movedToNewTile) {
-            ActionCreator.iterateSteps();
-            this.draw(prevX, prevY, backtrack ? this.shadeMap[2] : this.shadeMap[1]);
-
-            // set new prev coords
-            this.prevX = prevX;
-            this.prevY = prevY;
-    
-            // mark as visited
-            this.visited[this.y][this.x]++;
-    
-            if (backtrack) {
-                // IF we are backtracking, we've turned around so do not visit the last tile again
-                this.visited[this.prevY][this.prevX] = 2;
-            }
-            
-            if (this.visited[prevY][prevX] === 2 && this.visited[this.y][this.x] === 1) {
-                // Found an unwalked tile while backtracking, Mark last tile to 1 so we can
-                // revisit this tile again
-                this.visited[prevY][prevX] = 1;
-                this.draw(prevX, prevY, this.shadeMap[1]); // in this edge case we are backtracking but we want to keep this path available
+                ActionCreator.iterateSteps();
             }
         }
         return movedToNewTile;
     },
 
     updateConfig: function(mazeConfig) {
-        this.initialize(this.ctx, mazeConfig);
-        
+        this.mazeConfig = mazeConfig;
+        this.generateVistedTilesModel();
     },
+    _unvisited: function (point) {
+        return this.visited[point.y][point.x] === 0; 
+    },
+    _canMoveWithTremaux: function(point) {
+        return (!this.outOfBounds(point) && this.isOpen(point) && this.visited[point.y][point.x] < 2)
 
-    _canMoveWithTremaux: function(x, y) {
-        return (x >= 0 && y >= 0 && this._isOpen(x, y) && this.visited[y][x] < 2)
     },
     _isWall: function(x, y) {
-        return (this.maze[y][x] === "*");
+        return (this.mazeConfig.maze[y][x] === 0);
     },
-    _isOpen: function(x, y) {
-        return !this._isWall(x, y);
+    isOpen: function(point) {
+        return !this._isWall(point.x, point.y);
     },
     _hasVisited: function(direction) {
         let point = this._getXYForDirection(direction);
 
         // short circuiting here will prevent any TypeErrors
-        return (this._outOfBounds(point) || this.visited[point.y][point.x] > 0)
+        return (this.outOfBounds(point) || this.visited[point.y][point.x] > 0)
     },
-    _outOfBounds: function(point) {
+    outOfBounds: function(point) {
         return (point.y < 0 || 
                 point.x < 0 ||
                 this.visited[point.y] === undefined || 
                 this.visited[point.y][point.x] === undefined)
     },
-
+    // https://stackoverflow.com/questions/7348618/html5-canvas-clipping-by-color
     removeColor: function(color) {
-        var canvasData = this.ctx.getImageData(0, 0, 256, 256),
+        var canvasData = this.ctx.getImageData(0, 0, this.mazeConfig.canvasWidth, this.mazeConfig.canvasHeight),
         pix = canvasData.data;
 
         for (var i = 0, n = pix.length; i <n; i += 4) {
@@ -213,15 +296,8 @@ const WalkerManager = {
             }
         }
 
-    this.ctx.putImageData(canvasData, 0, 0);
+        this.ctx.putImageData(canvasData, 0, 0);
     },
-
-    // ************ Currently not using, can possibly throw away ************
-    _getShade: function() {
-        let shadeCode = this.maze[this.y][this.x]
-        return this.shadeMap[shadeCode];
-    },
-
     // method emulated from Primary Objects
     // http://www.primaryobjects.com/maze
     _getXYForDirection: function(direction) {
@@ -229,17 +305,19 @@ const WalkerManager = {
         switch(direction) {
                     // TREMAUX | WALL FOLLOWER
             case 0:   // North | Relative Left
-                    point.y--;
-                    break;
+                point.y--;
+                break;
             case 1:    // East | Relative Forward
-                    point.x++;
-                    break;
+                point.x++;
+                break;
             case 2:   // South | Relative Right
-                    point.y++;
-                    break;
+                point.y++;
+                break;
             case 3:    // West | Relative Backward
-                    point.x--;
-                    break;
+                point.x--;
+                break;
+            default:
+                break;
         }
         return point;
     }
@@ -255,7 +333,6 @@ function createArray(length) {
         var args = Array.prototype.slice.call(arguments, 1);
         while(i--) arr[length-1 - i] = createArray.apply(this, args);
     }
-
     return arr;
 }
 

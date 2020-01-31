@@ -4,6 +4,7 @@ import Select from 'react-select';
 const SelectorModule = ({ config }) => {
     return (
         <div className="selector">
+            <h4 className="label">{config.label}</h4>
             <Select
                 className={config.type}
                 options={config.options}
@@ -12,7 +13,7 @@ const SelectorModule = ({ config }) => {
                 onChange={(input) => config.handleChange(input)}
                 classNamePrefix={"selector"}
                 value={config.selection}
-                // menuIsOpen={true}
+                styles={config.styles}
             />
         </div>
     );

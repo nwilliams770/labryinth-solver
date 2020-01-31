@@ -1,11 +1,18 @@
 #selector-modules {
     position: absolute;
-    top: 50px;
-    left: 500px;
+    top: 90px;
+    left: 540px;
     .selector {
         width: 250px;
         &:first-of-type {
-            margin-bottom: 10px;
+            margin-bottom: 18px;
+        }
+        .label {
+            font-family: $pixelFontStack;
+            color: white;
+            font-size: 12px;
+            line-height: 15px;
+            margin-bottom: 5px;
         }
         .selector__control {
             border-radius: 0;
@@ -13,30 +20,13 @@
             background-color: black;
             .selector__value-container {
                 font-family: $pixelFontStack;
-                .selector__placeholder {
-                    color: #2B2B2A;
-                }
-                &.selector__value-container--has-value .selector__single-value {
-                    color: white;
-                }
             }
         }
-        .selector__menu {
-            background-color: black;
-            color: white;
+        .selector__menu .selector__menu-list .selector__option {
             font-family: $pixelFontStack;
-            .selector__menu-list {
-                .selector__option {
-                    &.selector__option--is-focused {
-
-                    }
-                    &.selector__option--is-selected {
-                        background-color: white;
-                        color: black;
-                    }
-                }
-            }
         }
+            
+        
     }
 }
 

@@ -1,0 +1,116 @@
+#footer {
+    #about {
+        position: absolute;
+        bottom: 20px;
+        left: 30px;
+        .trigger {
+            img {
+                width: 40px;
+                height: auto;
+            }
+            &:hover {
+                cursor: pointer;
+            }
+        }
+        .panel-content {
+            background-color: #101515;
+            font-family: $karlaFontStack;
+            position: relative;
+            text-align:center;
+            a {
+                display: inline-block;
+                color: #ececec;
+                margin: 12px 0;
+                padding-bottom: 2px;
+                &:hover {
+                    border-bottom: 1px solid #ececec;
+                }
+            }
+            #drawer-header {
+                background-color: #181C1C;
+                padding: 2vw 1vw;
+                text-align: left;
+                button {
+                    transform: rotate(90deg);
+                    width: 2vw;
+                    height: auto;
+                    position: absolute;
+                    left: 3%;
+                    top: 2%;
+                    min-width: 10px;
+                }
+                #drawer-title {
+                    width: 80%;
+                    margin: 0 auto;
+                    padding-bottom: 5px;
+                }
+                #drawer-sub-title {
+                    width: 70%;
+                    margin: 0 auto;
+                    margin-bottom: 20px;
+                }
+                .intro {
+                    color: #ececec;
+                    font-size: 1.35vw;
+                    line-height: 1.4;
+                }
+            }
+            #drawer-content {
+                text-align: left;
+                .item {
+                    .title {
+                        color: #ececec;
+                        background-color: #1D2121;
+                        padding: 1.25vw 2vw;
+                        font-size: 1.45vw;
+                    }
+                    .body {
+                        color: #c3c3c3;
+                        background-color: #101515;
+                        padding: 1vw 2vw;
+                        .point {
+                            font-size: 1.4vw;
+                            line-height: 1.75;
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    #contact {
+        @include horizontal-flex;
+        width: 1000px;
+        position: absolute;
+        bottom: -58px;
+        justify-content: space-between;
+        padding: 0 30px;
+        box-sizing: border-box;
+        p {
+            font-family: $karlaFontStack;
+            font-size: 14px;
+            color: #cccccc;
+            a {
+                font-weight: bold;
+                &:hover {
+                    border-bottom: 1px solid #ccc;
+                }
+            }
+        }
+        #icons {
+            @include horizontal-flex;
+            #github img {
+                width: 50px;
+                height: auto;
+                margin-right: 10px;
+            }
+    
+            #linkedin img {
+                width: 38px;
+                height: auto;
+                margin-top: 6px;
+            }
+        }
+    }
+}

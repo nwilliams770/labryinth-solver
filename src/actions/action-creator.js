@@ -20,3 +20,10 @@ export const iterateSteps = () => {
         actionType: "ITERATE_STEPS",
     });
 };
+
+export const destroyWall = (numWalls) => {
+    AppDispatcher.dispatch({
+        actionType: "DESTROY_WALL",
+        data: numWalls
+    });
+};
