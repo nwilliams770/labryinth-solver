@@ -132,7 +132,6 @@ const WalkerManager = {
     },
 // Wall Follower
     moveWithWall: function(point) {
-        console.log("point!", point);
         let prevX = this.x,
             prevY = this.y;
         this.x = point.x;
@@ -140,7 +139,21 @@ const WalkerManager = {
         let shade = this.visited[this.y][this.x] > 0 ? this.shadeMap[2] : this.shadeMap[1];
         this.draw(prevX, prevY, shade);
         this.visited[this.y][this.x]++;
+        // console.log("value at this.visited[this.y][this.x]", this.visited[this.y][this.x]);
+        // console.log("this.visited!", this.visited);
         ActionCreator.iterateSteps();
+
+
+        if (this.visited[this.y][this.x] !== 1) {
+            this.xStack.pop();
+            this.yStack.pop();
+            this.stackSize--;
+        } else {
+            this.xStack.push(point.x);
+            this.yStack.push(point.y);
+            this.stackSize++;
+
+        }
     },
 // Tremaux
     // Given a point, check for any adjaceent unvisited paths
@@ -276,7 +289,7 @@ const WalkerManager = {
     },
     // https://stackoverflow.com/questions/7348618/html5-canvas-clipping-by-color
     removeColor: function(color) {
-        var canvasData = this.ctx.getImageData(0, 0, 256, 256),
+        var canvasData = this.ctx.getImageData(0, 0, this.mazeConfig.canvasWidth, this.mazeConfig.canvasHeight),
         pix = canvasData.data;
 
         for (var i = 0, n = pix.length; i <n; i += 4) {

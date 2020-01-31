@@ -1,13 +1,13 @@
 .wall-destroy-buttons {
     position: absolute; 
     top: 30px;
-    left: 80px;
+    left: 30px;
     font-family: $pixelFontStack;
     color: white;
     .header {
         font-size: 10px;
         line-height: 14px;
-        margin-bottom: 5px;
+        margin-bottom: 10px;
         &.small {
             font-size: 8px;
             line-height: 8px;

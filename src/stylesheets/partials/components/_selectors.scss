@@ -1,11 +1,11 @@
 #selector-modules {
     position: absolute;
-    top: 50px;
-    left: 510px;
+    top: 90px;
+    left: 540px;
     .selector {
         width: 250px;
         &:first-of-type {
-            margin-bottom: 10px;
+            margin-bottom: 18px;
         }
         .label {
             font-family: $pixelFontStack;

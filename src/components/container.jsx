@@ -17,7 +17,7 @@ const Container = () => {
     let intro = !showIntro ? "" : <div id="intro-wrapper" onClick={() => hideIntro(false)}><Intro /></div>;
     return (
         <div id="container">
-            {/* {intro} */}
+            {intro}
             <App />
         </div>
         

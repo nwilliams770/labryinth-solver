@@ -3,7 +3,7 @@ import MazeStore from '../stores/maze-store';
 export const MazePathController = {
     initialize: function(ctx, walker, mazeConfig) {
         this.ctx = ctx;
-        this.speed = 70;
+        this.speed = 20;
         this.walker = walker;
         this.algorithm = null;
         this.mazeConfig = mazeConfig;

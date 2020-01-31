@@ -7,8 +7,8 @@ const aStar = {
         this.walker = walker;
         this.mazeConfig = mazeConfig;
         // For 10-path x 10-path maze
-        this.start = new GraphNode(0, 0, GraphNodeType.OPEN);
-        this.end = new GraphNode(18, 18, GraphNodeType.OPEN);
+        this.start = new GraphNode(mazeConfig.start, mazeConfig.start, GraphNodeType.OPEN);
+        this.end = new GraphNode(mazeConfig.end, mazeConfig.end, GraphNodeType.OPEN);
         this.openHeap = this.generateHeap();
         this.openHeap.push(this.start);
         this.initializeVisited();

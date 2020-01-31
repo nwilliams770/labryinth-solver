@@ -16,12 +16,12 @@
             background-color: #101515;
             font-family: $karlaFontStack;
             position: relative;
+            text-align:center;
             a {
+                display: inline-block;
                 color: #ececec;
-                position: absolute;
-                bottom: 3%;
-                left: 50%;
-                transform: translateX(-50%);
+                margin: 12px 0;
+                padding-bottom: 2px;
                 &:hover {
                     border-bottom: 1px solid #ececec;
                 }
@@ -29,6 +29,7 @@
             #drawer-header {
                 background-color: #181C1C;
                 padding: 2vw 1vw;
+                text-align: left;
                 button {
                     transform: rotate(90deg);
                     width: 2vw;
@@ -55,6 +56,7 @@
                 }
             }
             #drawer-content {
+                text-align: left;
                 .item {
                     .title {
                         color: #ececec;
@@ -68,7 +70,7 @@
                         padding: 1vw 2vw;
                         .point {
                             font-size: 1.4vw;
-                            line-height: 1.3;
+                            line-height: 1.75;
                         }
                     }
                 }

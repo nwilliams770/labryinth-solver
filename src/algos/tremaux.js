@@ -5,7 +5,7 @@ const dfs = {
         this.walker = walker;
         this.direction = 0;
         // For 10 x 10 maze
-        this.end = {x: 18, y: 18};
+        this.end = {x: mazeConfig.end, y: mazeConfig.end};
         this.mazeConfig = mazeConfig;
         this.ctx = ctx;
         this.visitedStackX = [];

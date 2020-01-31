@@ -27,7 +27,7 @@ const About = () => {
                         <div class="intro">
                             <p class="copy">
                                 Alaska: The Trial of the Maze Wizard is a visual exploration of various 
-                                graph traversing algorithms applied to maze representations. <br/>
+                                maze solving and graph traversal algorithms, in 8-bit goodness. <br/>
                                 Built with React + HTML5 Canvas.
                             </p>
                         </div>
@@ -39,8 +39,8 @@ const About = () => {
                             </div>
                             <div class="body">
                                 <ul>
-                                    <li class="point">Loren Ipsum</li>
-                                    <li class="point">Loren Ipsum</li>
+                                    <li class="point">Visits a given point in the maze at most twice.</li>
+                                    <li class="point">Not guaranteed to find the shortest path.</li>
                                 </ul>
                             </div>
                         </div>
@@ -50,8 +50,8 @@ const About = () => {
                             </div>
                             <div class="body">
                                 <ul>
-                                    <li class="point">Loren Ipsum</li>
-                                    <li class="point">Loren Ipsum</li>
+                                    <li class="point">Cannot alway solve multiply connected mazes.</li>
+                                    <li class="point">Not guaranteed to find the shortest path.</li>
                                 </ul>
                             </div>
                         </div>
@@ -62,7 +62,7 @@ const About = () => {
                             <div class="body">
                                 <ul>
                                     <li class="point">Loren Ipsum</li>
-                                    <li class="point">Loren Ipsum</li>
+                                    <li class="point">Guaranteed to find the shortest path.</li>
                                 </ul>
                             </div>
                         </div>
@@ -73,7 +73,7 @@ const About = () => {
                             <div class="body">
                                 <ul>
                                     <li class="point">Loren Ipsum</li>
-                                    <li class="point">Loren Ipsum</li>
+                                    <li class="point">Guaranteed to find the shortest path.</li>
                                 </ul>
                             </div>
                         </div>

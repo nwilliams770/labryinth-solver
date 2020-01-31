@@ -1,3 +1,5 @@
+import MazePathController from '../controller/mazeController';
+
 // We are using a rotation matrix to determine the relative directions no matter which direction
 // Because we are rotating about our own walker as opposed to the origin, our vector size is of length 1
 // We are also using a kind of zero-point mechanism to determine how many degrees for our rotation matrix
@@ -13,7 +15,7 @@ const wallFollower = {
         this.walker = walker;
         this.mazeConfig = mazeConfig;
         // For 10-path x 10-path maze
-        this.end = {x: 18, y: 18};
+        this.end = {x: mazeConfig.end, y: mazeConfig.end};
         this.currentDirection = 1.5 * Math.PI; // we want to start facing South e.g 270 deg;
     },
     step: function () {
@@ -112,7 +114,9 @@ const wallFollower = {
         return (this.walker.x === this.end.x && this.walker.y === this.end.y);
     },
     solve: function() {
-        this.walker.removeColor([201,64,133]);
+        // this.walker.removeColor([201,64,133]);
+        MazePathController.clearCanvas();
+        this.walker.drawPathFromStack();
     }
 };
 

@@ -65,7 +65,7 @@ const WallDestroyButtons = () => {
     return (
         <div className="wall-destroy-buttons">
             <h4 className="header">Destroy a Wall</h4>
-            <h4 className="header small">(note: may cause cycles)</h4>
+            {/* <h4 className="header small">(note: may cause cycles)</h4> */}
             <div className="button-container">
                 <Button config={timesOneConfig} enabled={buttonsEnabled}/>
                 <Button config={timesFiveConfig} enabled={buttonsEnabled}/>
