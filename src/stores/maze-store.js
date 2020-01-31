@@ -114,7 +114,7 @@ const MazeStore = Object.assign({}, EventEmitter.prototype, {
         // Our maze is 20 x 20 but last row and last col are OUTER walls so need to account for
         for (let y = 0; y < mazeModel.length - 1; y++) {
             for (let x = 0; x < mazeModel.length - 1; x++) {
-                if (mazeModel[y][x] == 0) {
+                if (mazeModel[y][x] === 0) {
                     walls.push([x, y]);
                 }
             }
@@ -195,7 +195,9 @@ MazeStore.dispatchToken = AppDispatcher.register(function (action) {
             break;
         case "DEBUG":
             MazePathController.clearTimeout(false);
+            break;
         default:
+            break;
     };
 });
 

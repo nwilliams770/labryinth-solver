@@ -305,17 +305,19 @@ const WalkerManager = {
         switch(direction) {
                     // TREMAUX | WALL FOLLOWER
             case 0:   // North | Relative Left
-                    point.y--;
-                    break;
+                point.y--;
+                break;
             case 1:    // East | Relative Forward
-                    point.x++;
-                    break;
+                point.x++;
+                break;
             case 2:   // South | Relative Right
-                    point.y++;
-                    break;
+                point.y++;
+                break;
             case 3:    // West | Relative Backward
-                    point.x--;
-                    break;
+                point.x--;
+                break;
+            default:
+                break;
         }
         return point;
     }

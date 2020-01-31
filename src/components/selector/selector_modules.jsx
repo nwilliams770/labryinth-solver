@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import SelectorModule from './selector_module';
 import * as ActionCreator from '../../actions/action-creator';
-import MazeStore from '../../stores/maze-store';
 
 const SelectorModules = () => {
     const [mazeSelection, updateMazeSelection] = useState({value: "newest", label: "Newest"});

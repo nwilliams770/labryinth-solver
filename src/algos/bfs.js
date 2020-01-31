@@ -1,4 +1,3 @@
-import MazeStore from '../stores/maze-store';
 import MazePathController from '../controller/mazeController';
 
 const bfs = {

@@ -6,7 +6,6 @@ import MazeStore from '../../stores/maze-store';
 function getRandomArbitraryExlusive(min, max, exclusion) {
     let num = Math.floor(Math.random() * (max - min) + min);
  
-
     while (num === exclusion) {
         num = Math.floor(Math.random() * (max - min) + min);
     };
@@ -22,8 +21,6 @@ const speeches = [
     "I don't even know what a warp drive is...",
     "Escaped at last! Time to accost this Maze Wizard and bring his bodacious treasures back to my people!"
 ];
-
-
 
 const Alaska = () => {
     const [xPos, updateXPos] = useState(300);
