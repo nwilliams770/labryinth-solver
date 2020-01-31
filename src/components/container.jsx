@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import '../stylesheets/app.scss';
 import App from './app';
 import Intro from './intro';
-import CSSTransitionGroup from 'react-addons-css-transition-group';
 
 const Navbar = () => {
     return (

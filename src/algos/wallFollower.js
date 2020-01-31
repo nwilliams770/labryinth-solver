@@ -33,14 +33,9 @@ const wallFollower = {
             // But if we can't turn right, we're in a deadend and need to turn around
             point = this.canMoveRight(this.currentDirection);
             if (point) {
-
-
                 this.walker.moveWithWall(point);
                 this.rotateRightNinety();
-
             } else {
-
-
                 point = this.backTrack();
                 this.walker.moveWithWall(point);
                 // Do a 180
@@ -48,7 +43,6 @@ const wallFollower = {
                 this.rotateLeftNinety();
             }
         }
-
     },
     backTrack: function () {
         // Backward at 0 deg is x -1
@@ -56,7 +50,7 @@ const wallFollower = {
             y = 0,
             theta = this.currentDirection,
             relativeBackwardTileVector = this.rotate(x, y, theta), // coordinates for the relative left tile
-            relativeBackwardTile = [this.walker.x + relativeBackwardTileVector[0], this.walker.y + relativeBackwardTileVector[1]];
+            relativeBackwardTile = {x: this.walker.x + relativeBackwardTileVector[0], y: this.walker.y + relativeBackwardTileVector[1]};
             return relativeBackwardTile;
     },
     canMoveLeft: function () {
@@ -65,9 +59,9 @@ const wallFollower = {
             y = -1,
             theta = this.currentDirection,
             relativeLeftTileVector = this.rotate(x, y, theta), // coordinates for the relative left tile
-            relativeLeftTile = [this.walker.x + relativeLeftTileVector[0], this.walker.y + relativeLeftTileVector[1]];
+            relativeLeftTile = {x:  this.walker.x + relativeLeftTileVector[0], y: this.walker.y + relativeLeftTileVector[1]}
 
-        let result = (relativeLeftTile[0] >= 0 && relativeLeftTile[1] >= 0 && this.walker._isOpen(relativeLeftTile[0], relativeLeftTile[1])) ? relativeLeftTile : false;
+        let result = (!this.walker.outOfBounds(relativeLeftTile) && this.walker.isOpen(relativeLeftTile)) ? relativeLeftTile : false;
         return result;
     },
     canMoveForward: function () {
@@ -76,9 +70,9 @@ const wallFollower = {
             y = 0,
             theta = this.currentDirection,
             relativeForwardTileVector = this.rotate(x, y, theta), // coordinates for the relative forward tile
-            relativeForwardTile = [this.walker.x + relativeForwardTileVector[0], this.walker.y + relativeForwardTileVector[1]];
+            relativeForwardTile = {x: this.walker.x + relativeForwardTileVector[0], y: this.walker.y + relativeForwardTileVector[1]};
             
-            let result = (relativeForwardTile[0] >= 0 && relativeForwardTile[1] >= 0 && this.walker._isOpen(relativeForwardTile[0], relativeForwardTile[1])) ? relativeForwardTile : false;
+            let result = (!this.walker.outOfBounds(relativeForwardTile) && this.walker.isOpen(relativeForwardTile)) ? relativeForwardTile : false;
             return result;
     },
     canMoveRight: function () {
@@ -87,9 +81,9 @@ const wallFollower = {
             y = 1,
             theta = this.currentDirection,
             relativeRightTileVector = this.rotate(x, y, theta), // coordinates for the relative right tile
-            relativeRightTile = [this.walker.x + relativeRightTileVector[0], this.walker.y + relativeRightTileVector[1]];
+            relativeRightTile = {x: this.walker.x + relativeRightTileVector[0], y: this.walker.y + relativeRightTileVector[1]};
 
-            let result = (relativeRightTile[0] >= 0 && relativeRightTile[1] >= 0 && this.walker._isOpen(relativeRightTile[0], relativeRightTile[1])) ? relativeRightTile : false;
+            let result = (!this.walker.outOfBounds(relativeRightTile) && this.walker.isOpen(relativeRightTile)) ? relativeRightTile : false;
             return result;
     },
     rotate: function (x, y, theta) {

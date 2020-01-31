@@ -16,7 +16,6 @@ export const MazeGenerator = {
         this.ctx = ctx;
         this.mazeConfig = mazeConfig;
 
-        console.log("ctx", ctx);
         // Setup canvas
         this.ctx.fillStyle = mazeConfig.wallColor;
         this.ctx.fillRect(0,0,mazeConfig.canvasWidth,mazeConfig.canvasHeight);
@@ -32,10 +31,9 @@ export const MazeGenerator = {
 
         this.mazeModel = this._createMap(this.mazeConfig.width, this.mazeConfig.height);
         
-        this._growTree(this.ctx, this.mazeModel, x, y, cellSelectionMethod, this.mazeConfig);
+        this._growTree(this.mazeModel, x, y, cellSelectionMethod);
 
         return this.mazeModel;
-
     },
     drawMaze: function (mazeModel) {
         this._clearCanvas();
@@ -54,20 +52,16 @@ export const MazeGenerator = {
     },
     // Redraws the maze under the assumption initialize has already been called e.g. we have a mazeConfig & ctx
     redrawMaze: function (newCellSelectionMethod) {
-        // reset canvas
         this._clearCanvas();
         // starting X,Y 
         let x = this._getRandomIndex(0, this.mazeConfig.width - 1), 
             y = this._getRandomIndex(0, this.mazeConfig.height - 1),
             map = this._createMap(this.mazeConfig.width, this.mazeConfig.height);
-        this._growTree(this.ctx, map, x, y, newCellSelectionMethod, this.mazeConfig);
+        this._growTree(map, x, y, newCellSelectionMethod);
         return this.mazeModel;
-        
+    
     },
-    _clearCanvas: function () {
-        this.ctx.fillRect(0,0,this.mazeConfig.canvasWidth,this.mazeConfig.canvasHeight);
-    },
-    _growTree: function (ctx, mazeModel, startingX, startingY, cellSelectionMethod, mazeConfig) {
+    _growTree: function (mazeModel, startingX, startingY, cellSelectionMethod) {
         let activeCellStackX = [startingX],
             activeCellStackY = [startingY],
             activeStackSize = 1,
@@ -105,7 +99,6 @@ export const MazeGenerator = {
         };
 
         this.mazeModel = mazeModel;
-
     },
     // Given a [X, Y], randomly checks each neighbor cell, returning direction code of first valid neighbor
     // A valid neighbor cell is one that is within bounds and has not been visited previously
@@ -126,13 +119,6 @@ export const MazeGenerator = {
             };      
         };
           return false;
-    },
-    _drawEntraceExit: function () {
-        // Draw entrance/exit
-        this.ctx.fillStyle = 'yellow';
-        this.ctx.fillRect(this.mazeConfig.outerWall,0,this.mazeConfig.pathWidth,this.mazeConfig.outerWall);
-        this.ctx.fillRect(this.mazeConfig.canvasWidth - this.mazeConfig.outerWall - this.mazeConfig.pathWidth,this.mazeConfig.canvasHeight - this.mazeConfig.outerWall,this.mazeConfig.pathWidth,this.mazeConfig.outerWall);
-        this.ctx.fillStyle = this.mazeConfig.wallColor; // Revert fillStyle for future redraws 
     },
     _createMap: function (width, height) {
         let map = [];
@@ -157,6 +143,16 @@ export const MazeGenerator = {
             default:
                 break;
         }
+    },
+    _drawEntraceExit: function () {
+        // Draw entrance/exit
+        this.ctx.fillStyle = 'yellow';
+        this.ctx.fillRect(this.mazeConfig.outerWall,0,this.mazeConfig.pathWidth,this.mazeConfig.outerWall);
+        this.ctx.fillRect(this.mazeConfig.canvasWidth - this.mazeConfig.outerWall - this.mazeConfig.pathWidth,this.mazeConfig.canvasHeight - this.mazeConfig.outerWall,this.mazeConfig.pathWidth,this.mazeConfig.outerWall);
+        this.ctx.fillStyle = this.mazeConfig.wallColor; // Revert fillStyle for future redraws 
+    },
+    _clearCanvas: function () {
+        this.ctx.fillRect(0,0,this.mazeConfig.canvasWidth,this.mazeConfig.canvasHeight);
     },
 // Fisher-Yates shuffle
 // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array

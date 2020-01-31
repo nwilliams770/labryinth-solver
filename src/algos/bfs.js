@@ -30,7 +30,7 @@ const bfs = {
             // maybe return here?
         }
         
-        let cellsToEnqueue = this.walker.visitNeighbors(x, y);
+        let cellsToEnqueue = this.walker.visitAndEnqueueNeighbors(x, y);
         this.processCells(cellsToEnqueue, {x: x, y: y});
         this.nodesLeftInLayer--;
 

@@ -86,10 +86,40 @@ const MazeStore = Object.assign({}, EventEmitter.prototype, {
         WalkerManager.initialize(pathCtx, mazeConfig);
         MazePathController.initialize(pathCtx, WalkerManager, mazeConfig);
     },
-
     getMazeConfig: function() {
         return mazeConfig;
     },
+    destroyWall: function(numWalls) {
+        let walls = MazeStore.gatherWalls(maze);
+        let wallIndex;
+
+        for (let i = 0; i < numWalls; i++) {
+            // getRandomIntInclusive
+            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+            wallIndex = Math.floor(Math.random() * walls.length);
+            maze[walls[wallIndex][1]][walls[wallIndex][0]] = 1;
+        }
+        mazeConfig.maze = maze;
+        // MazeStore.provideContextsAndMazeModel();
+        WalkerManager.updateConfig(mazeConfig);
+        MazeGenerator.drawMaze(maze);
+        MazePathController.clearCanvas();
+        MazeStore._resetRecordedSteps();
+        // re-update walker and whatever else you need to
+    },
+    gatherWalls: function (mazeModel) {
+        let walls = [];
+        // Our maze is 20 x 20 but last row and last col are OUTER walls so need to account for
+        for (let y = 0; y < mazeModel.length - 1; y++) {
+            for (let x = 0; x < mazeModel.length - 1; x++) {
+                if (mazeModel[y][x] == 0) {
+                    walls.push([x, y]);
+                }
+            }
+        }
+        return walls;
+    },
+// Steps-related
     getSteps: function() {
         return steps;
     },
@@ -113,34 +143,6 @@ const MazeStore = Object.assign({}, EventEmitter.prototype, {
     _resetRecordedSteps: function () {
         recordedSteps = {};
         MazeStore.emitCustomEvent("recorded-steps--change");
-    },
-    destroyWall: function(numWalls) {
-        let walls = MazeStore.gatherWalls(maze);
-        let wallIndex;
-
-        for (let i = 0; i < numWalls; i++) {
-            // getRandomIntInclusive
-            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
-            wallIndex = Math.floor(Math.random() * walls.length);
-            maze[walls[wallIndex][1]][walls[wallIndex][0]] = 1;
-        }
-        mazeConfig.maze = maze;
-        // MazeStore.provideContextsAndMazeModel();
-        WalkerManager.updateConfig(mazeConfig);
-        MazeGenerator.drawMaze(maze);
-        // re-update walker and whatever else you need to
-    },
-    gatherWalls: function (mazeModel) {
-        let walls = [];
-        // Our maze is 20 x 20 but last row and last col are OUTER walls so need to account for
-        for (let y = 0; y < mazeModel.length - 1; y++) {
-            for (let x = 0; x < mazeModel.length - 1; x++) {
-                if (mazeModel[y][x] == 0) {
-                    walls.push([x, y]);
-                }
-            }
-        }
-        return walls;
     },
     _runSolverScript: function(scriptName) {
         // Stop any currently running scripts
@@ -189,6 +191,8 @@ MazeStore.dispatchToken = AppDispatcher.register(function (action) {
         case "DESTROY_WALL":
             MazeStore.destroyWall(action.data);
             break;
+        case "DEBUG":
+            MazePathController.clearTimeout(false);
         default:
     };
 });

@@ -17,9 +17,6 @@ const WallDestroyButtons = () => {
     }
 
     useEffect(() => {
-        // Listen to iterate steps events coming
-        // Listen to mazesolved so we know to add the steps to our state
-
         MazeStore.addCustomEventListener("run-script", handleRunScriptEvent);
         MazeStore.addCustomEventListener("maze-solved", handleMazeSolvedEvent);
         return () => {
@@ -29,22 +26,11 @@ const WallDestroyButtons = () => {
     }, [])
 
     const timesOneConfig = {
-        type: 1,
+        type: 5,
         // Seems weird that we are importing here, then passing down as props as opposed to
         // passing down an explicit file path
         // Guessing related to webpack relative file pathing?
         icon: timesOneIcon,
-        copy: "x1",
-        handleClick: (type) => {
-            if (buttonsEnabled) {
-                ActionCreator.destroyWall(type);
-            }
-        }
-    };
-
-    const timesFiveConfig = {
-        type: 5,
-        icon: timesFiveIcon,
         copy: "x5",
         handleClick: (type) => {
             if (buttonsEnabled) {
@@ -53,6 +39,18 @@ const WallDestroyButtons = () => {
         }
     };
 
+    const timesFiveConfig = {
+        type: 10,
+        icon: timesFiveIcon,
+        copy: "x10",
+        handleClick: (type) => {
+            if (buttonsEnabled) {
+                ActionCreator.destroyWall(type);
+            }
+        }
+    };
+
+    // For Dev Purposes Only
     const timesFiftyConfig = {
         type: 50,
         icon: timesFiveIcon,
@@ -71,8 +69,6 @@ const WallDestroyButtons = () => {
             <div className="button-container">
                 <Button config={timesOneConfig} enabled={buttonsEnabled}/>
                 <Button config={timesFiveConfig} enabled={buttonsEnabled}/>
-                <Button config={timesFiftyConfig} enabled={buttonsEnabled}/>
-
             </div>
 
         </div>
@@ -80,4 +76,3 @@ const WallDestroyButtons = () => {
 }
 
 export default WallDestroyButtons;
-

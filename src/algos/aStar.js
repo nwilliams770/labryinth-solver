@@ -1,62 +1,36 @@
 import MazePathController from '../controller/mazeController';
 import * as ActionCreator from '../actions/action-creator';
 
-
 const aStar = {
     initialize: function (ctx, walker, mazeConfig) {
         this.ctx = ctx;
         this.walker = walker;
         this.mazeConfig = mazeConfig;
         // For 10-path x 10-path maze
-        // this.end = {x: 18, y: 18};
-        // this.isSolved = false;
         this.start = new GraphNode(0, 0, GraphNodeType.OPEN);
         this.end = new GraphNode(18, 18, GraphNodeType.OPEN);
-        this.openHeap = this.heap();
+        this.openHeap = this.generateHeap();
         this.openHeap.push(this.start);
         this.initializeVisited();
     },
-    initializeVisited: function () {
-        // Iterate through maze from mazeConfig, updating walker.visited[y][x] to the GraphNode
-        for (let y = 0; y < this.walker.maze.length; y++) {
-            for (let x = 0; x < this.walker.maze.length; x++) {
-                this.walker.visited[y][x] = new GraphNode(x, y, (this.walker._isOpen(x, y) ? GraphNodeType.OPEN : GraphNodeType.WALL));
-            }
-        }
-    },
-
-    heap: function () {
-        return new BinaryHeap(function (a, b) {
-            if (a.fCost < b.fCost) return 1;
-            if (a.fCost > b.fCost) return -1;
-            return 0;
-        })
-    },
-
     step: function () {
         this.search();
     },
     search: function () {
         let currentNode,
             currentNodeNeighbors;
+    
         if (this.openHeap.itemCount > 0) {
             currentNode = this.openHeap.pop()
             currentNode.closed = true;
             this.walker.x = currentNode.x;
             this.walker.y = currentNode.y;
+            currentNodeNeighbors = this.walker.getAStarNeighbors(currentNode.x, currentNode.y);
 
-            if (currentNode.x === this.end.x && currentNode.y === this.end.y) {
-                // this.solve
-                console.log("solved!");
-            }
-            currentNodeNeighbors = this.walker.getValidNeighbors(currentNode.x, currentNode.y);
-            // console.log("currentNodeNeighbors", currentNodeNeighbors);
             currentNodeNeighbors.forEach(neighbor => {
                 let movementCostToNeighbor = currentNode.gCost + neighbor.cost,
                     previouslyVisited = neighbor.visited;
-                // console.log("neighbor", neighbor);
-                // console.log("movementCostToNeighbor", movementCostToNeighbor, "urrentNode.gCost", currentNode.gCost, "neighbor.cost", neighbor.cost, "neighbor", neighbor);
-                // if (movementCostToNeighbor < neighbor.g || !neighbor.visited)
+
                 if (movementCostToNeighbor < neighbor.g || !previouslyVisited) {
                     neighbor.visited = true;
                     neighbor.parent = currentNode;
@@ -76,7 +50,23 @@ const aStar = {
             })
         }
     },
-
+    initializeVisited: function () {
+        // Iterate through maze from mazeConfig, updating walker.visited[y][x] to GraphNodes
+        for (let y = 0; y < this.walker.maze.length; y++) {
+            for (let x = 0; x < this.walker.maze.length; x++) {
+                let point = {x: x, y: y};
+                this.walker.visited[y][x] = new GraphNode(x, y, (this.walker.isOpen(point) ? GraphNodeType.OPEN : GraphNodeType.WALL));
+            }
+        }
+    },
+    generateHeap: function () {
+        // generate a heap with our score function
+        return new BinaryHeap(function (a, b) {
+            if (a.fCost < b.fCost) return 1;
+            if (a.fCost > b.fCost) return -1;
+            return 0;
+        })
+    },
     // http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
     manhattan: function (a, b) {
         let d1 = Math.abs(b[0] - a[0]),
@@ -84,26 +74,20 @@ const aStar = {
         // console.log("manhattan", d1, d2, d1 + d2);
         return d1 + d2;
     },
-
     isSolved: function () {
         return (this.walker.x === this.end.x && this.walker.y === this.end.y);
     },
     solve: function () {
         let currentCell = this.walker.visited[this.end.y][this.end.x],
-            shortestPath = [[currentCell.x, currentCell.y]],
-            shortestPathLength = 0;
+            shortestPath = [[currentCell.x, currentCell.y]];
         while (true) {
             if (shortestPath[0][0] === this.start.x && shortestPath[0][1] === this.start.y) {
                 break;
-
             } else {
                 currentCell = currentCell.parent;
                 shortestPath.unshift([currentCell.x, currentCell.y]);
-                shortestPathLength++;
             }
         }
-        shortestPath.forEach(path => console.log(path));
-        console.log("shortestPath", shortestPath);
         MazePathController.clearCanvas();
         this.walker.drawPath(shortestPath);
     }
@@ -124,10 +108,6 @@ class GraphNode {
         this.parent = null;
         this.type = type;
     }
-
-    // fCost() {
-    //     return this.gCost + this.hCost;
-    // }
 }
 
 
@@ -211,8 +191,6 @@ class BinaryHeap {
                 
         }
     }
-
-
     sortUp(i) {
         // console.log("initial i:", i);
         let el = this.items[i],
@@ -222,16 +200,7 @@ class BinaryHeap {
             parentItem;
         while (true) {
             parentItem = this.items[parentIndex];
-            // console.log("--------parentItem", parentItem, "------parentIndex", parentIndex);
-            // console.log("parentIndex", parentIndex);
-            // Score function should be structured as follows for usability
-            // function (a, b) {
-            //      if (a.fCost < b.fCost) {
-            //          return 1;
-            //    } elsif (a.fCost > b.fCost) {
-            //          return -1;
-            //}     else { return 0}
-            // }
+
             if (this.scoreFunction(el, parentItem) > 0) {
                 this.items[parentIndex] = el;
                 this.items[i] = parentItem;
