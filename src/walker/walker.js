@@ -139,8 +139,6 @@ const WalkerManager = {
         let shade = this.visited[this.y][this.x] > 0 ? this.shadeMap[2] : this.shadeMap[1];
         this.draw(prevX, prevY, shade);
         this.visited[this.y][this.x]++;
-        // console.log("value at this.visited[this.y][this.x]", this.visited[this.y][this.x]);
-        // console.log("this.visited!", this.visited);
         ActionCreator.iterateSteps();
 
 

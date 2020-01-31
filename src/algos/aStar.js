@@ -6,7 +6,6 @@ const aStar = {
         this.ctx = ctx;
         this.walker = walker;
         this.mazeConfig = mazeConfig;
-        // For 10-path x 10-path maze
         this.start = new GraphNode(mazeConfig.start, mazeConfig.start, GraphNodeType.OPEN);
         this.end = new GraphNode(mazeConfig.end, mazeConfig.end, GraphNodeType.OPEN);
         this.openHeap = this.generateHeap();
@@ -71,7 +70,6 @@ const aStar = {
     manhattan: function (a, b) {
         let d1 = Math.abs(b[0] - a[0]),
             d2 = Math.abs(b[1] - a[1]);
-        // console.log("manhattan", d1, d2, d1 + d2);
         return d1 + d2;
     },
     isSolved: function () {
@@ -161,7 +159,6 @@ class BinaryHeap {
             rightChildIndex = n * 2 + 2;
             // If there is a left child
             if (leftChildIndex < this.itemCount) {
-                // console.log("leftChildIndex", leftChildIndex, "this.items", this.items);
                 swapIndex = leftChildIndex;
 
                 // If there is a right child
@@ -184,15 +181,10 @@ class BinaryHeap {
             } else {
                 // no more children, also in correct position
                 return;
-            }
-
-
-
-                
+            }   
         }
     }
     sortUp(i) {
-        // console.log("initial i:", i);
         let el = this.items[i],
         // Property of heap; subtract 1 to accomodate for 0 index
         // https://www.cs.cmu.edu/~adamchik/15-121/lectures/Binary%20Heaps/heaps.html

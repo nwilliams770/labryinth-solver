@@ -186,7 +186,6 @@ const Alaska = () => {
             //    same as   list.map(obj => Object.assign({}, a));
     
         const step = () => {
-            // console.log("calling step, pauseRef.current", pauseRef.current);
             if (pauseRef.current) {
                 _requestAnimationFrame(step);
                 saveLeftoverAnimationTime(animationList);

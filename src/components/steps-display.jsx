@@ -43,8 +43,6 @@ const StepsDisplay = () => {
     }
 
     const handleMazeSolvedEvent = () => {
-        // processRecordedSteps(getRecordedSteps());
-        console.log("firing mazesolved event!");
         updateRecordedSteps(getRecordedSteps());
     }
 
@@ -54,12 +52,9 @@ const StepsDisplay = () => {
         }))
     }
 
-
-
     useEffect(() => {
         // Listen to iterate steps events coming
         // Listen to mazesolved so we know to add the steps to our state
-
         MazeStore.addCustomEventListener("steps--change", handleIterateEvent);
         MazeStore.addCustomEventListener("recorded-steps--change", handleMazeSolvedEvent);
         return () => {
@@ -74,8 +69,6 @@ const StepsDisplay = () => {
             <div className="recorded-steps-container">
                 {processRecordedSteps(recordedSteps)}
             </div>
-            {/* {console.log("recordedSteps", recordedSteps)}
-            {console.log("recordedSteps--PROCESSED", processRecordedSteps(recordedSteps))} */}
         </div>
     )
 }
