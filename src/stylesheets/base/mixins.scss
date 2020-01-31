@@ -1,0 +1,17 @@
+@mixin flex {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+@mixin horizontal-flex {
+    @include flex;
+    flex-direction: row;
+}
+
+@mixin vertical-flex {
+    @include flex;
+    flex-direction: column;
+}

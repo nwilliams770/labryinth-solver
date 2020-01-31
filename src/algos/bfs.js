@@ -1,5 +1,4 @@
-import MazeStore from '../../stores/maze-store';
-import MazePathController from '../../controller/mazeController';
+import MazePathController from '../controller/mazeController';
 
 const bfs = {
     // Walker will track:
@@ -9,7 +8,7 @@ const bfs = {
         this.walker = walker;
         this.mazeConfig = mazeConfig;
         // For 10-path x 10-path maze
-        this.end = {x: 18, y: 18};
+        this.end = {x: mazeConfig.end, y: mazeConfig.end};
         this.nodesLeftInLayer = 1; // our start
         this.nodesInNextLayer = 0;
 
@@ -30,7 +29,7 @@ const bfs = {
             // maybe return here?
         }
         
-        let cellsToEnqueue = this.walker.visitNeighbors(x, y);
+        let cellsToEnqueue = this.walker.visitAndEnqueueNeighbors(x, y);
         this.processCells(cellsToEnqueue, {x: x, y: y});
         this.nodesLeftInLayer--;
 
@@ -42,11 +41,6 @@ const bfs = {
             // if we want EVERY step taken, do it in process cells
 
         }
-
-
-        
-        
-        
     },
     processCells: function(cells, startingCell) {
         cells.forEach(cell => {
@@ -63,7 +57,6 @@ const bfs = {
         return this.endFound;
     },
     solve: function() {
-        // return;
         let currentCell = [this.end.x, this.end.y],
             shortestPath = [currentCell];
         while (this.visitedPaths.length > 0) {
@@ -74,11 +67,9 @@ const bfs = {
                     shortestPath.unshift(possiblePath[0]);
             }
         };
-        console.log(shortestPath);
-        // return;
+
         MazePathController.clearCanvas();
         this.walker.drawPath(shortestPath);
-
     }
 };
 
