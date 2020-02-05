@@ -25,7 +25,7 @@ const WallDestroyButtons = () => {
         }
     }, [])
 
-    const timesOneConfig = {
+    const timesFiveConfig = {
         type: 5,
         // Seems weird that we are importing here, then passing down as props as opposed to
         // passing down an explicit file path
@@ -39,7 +39,7 @@ const WallDestroyButtons = () => {
         }
     };
 
-    const timesFiveConfig = {
+    const timesTenConfig = {
         type: 10,
         icon: timesFiveIcon,
         copy: "x10",
@@ -67,10 +67,9 @@ const WallDestroyButtons = () => {
             <h4 className="header">Destroy a Wall</h4>
             {/* <h4 className="header small">(note: may cause cycles)</h4> */}
             <div className="button-container">
-                <Button config={timesOneConfig} enabled={buttonsEnabled}/>
                 <Button config={timesFiveConfig} enabled={buttonsEnabled}/>
+                <Button config={timesTenConfig} enabled={buttonsEnabled}/>
             </div>
-
         </div>
     )
 }
