@@ -67,9 +67,9 @@ const MazeStore = Object.assign({}, EventEmitter.prototype, {
         // Emit sprite events
         MazeStore.emitCustomEvent('sprite-sorcerer--animate');
         MazeStore.emitCustomEvent('sprite-alaska--toggle-speech-visibility');
-    
+
         // Clear any potentially running scripts, including saved/recording steps
-        MazePathController.clearTimeout();                    
+        MazePathController.clearTimeout();
         MazePathController.clearCanvas();
         MazeStore._resetRecordedSteps();
         MazeStore.resetSteps();
@@ -94,6 +94,7 @@ const MazeStore = Object.assign({}, EventEmitter.prototype, {
     destroyWall: function(numWalls) {
         let walls = MazeStore.gatherWalls(maze);
         let wallIndex;
+        if (walls.length === 0) return;
 
         for (let i = 0; i < numWalls; i++) {
             // getRandomIntInclusive
@@ -153,7 +154,7 @@ const MazeStore = Object.assign({}, EventEmitter.prototype, {
         // Locate the script and run it
 
         // Stop and clear any currently running scripts
-        MazePathController.clearTimeout();    
+        MazePathController.clearTimeout();
         MazePathController.clearCanvas();
 
         // Reset any steps that were being recorded, re-provide Contexts to reset visited
@@ -194,7 +195,7 @@ MazeStore.dispatchToken = AppDispatcher.register(function (action) {
             MazeStore.destroyWall(action.data);
             break;
         case "DEBUG":
-            MazePathController.clearTimeout(false);
+            MazePathController.clearTimeout();
             break;
         default:
             break;
