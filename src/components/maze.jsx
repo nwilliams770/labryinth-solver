@@ -29,8 +29,8 @@ class Maze extends React.Component {
         MazeStore.saveCanvasContexts({pathContext: this._pathCtx, mazeContext: this._mazeCtx});
         MazeStore.createMaze();
         // We aren't doing any component-level interactins with the store that would provide the ctx so we can have to manually provide it
-        // we may not even need this line since MazeStore is emitting a chance once the maze is drawn     
-        //  WalkerManager.initialize(this._pathCtx, this.state.mazeConfig); 
+        // we may not even need this line since MazeStore is emitting a chance once the maze is drawn
+        //  WalkerManager.initialize(this._pathCtx, this.state.mazeConfig);
     };
 
     // No binding required
@@ -46,13 +46,13 @@ class Maze extends React.Component {
         return (
             <div id="maze">
                 <div className="wrapper">
-                    <PureCanvas 
+                    <PureCanvas
                         canvasWidth={this.state.mazeConfig.canvasWidth}
                         canvasHeight={this.state.mazeConfig.canvasHeight}
                         label={"path-layer"}
                         contextRef={this.saveContext}
                     />
-                    <PureCanvas 
+                    <PureCanvas
                         canvasWidth={this.state.mazeConfig.canvasWidth}
                         canvasHeight={this.state.mazeConfig.canvasHeight}
                         label={"maze-layer"}
@@ -68,7 +68,7 @@ class PureCanvas extends React.Component {
     shouldComponentUpdate() {
       return false;
     };
-  
+
     render() {
         return (
         <canvas

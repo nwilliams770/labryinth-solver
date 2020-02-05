@@ -28,7 +28,7 @@ const Sorcerer = (props) => {
         return () => {
             MazeStore.removeCustomEventListener('sprite-sorcerer--animate', handleSpriteEvent);
         }
-    }, [handleSpriteEvent]); 
+    }, [handleSpriteEvent]);
 
     return (
         <div id="sorcerer" className="sprite">

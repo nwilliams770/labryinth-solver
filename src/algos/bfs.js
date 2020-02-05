@@ -28,7 +28,7 @@ const bfs = {
             this.endFound = true;
             // maybe return here?
         }
-        
+
         let cellsToEnqueue = this.walker.visitAndEnqueueNeighbors(x, y);
         this.processCells(cellsToEnqueue, {x: x, y: y});
         this.nodesLeftInLayer--;
@@ -61,7 +61,7 @@ const bfs = {
             shortestPath = [currentCell];
         while (this.visitedPaths.length > 0) {
             let possiblePath = this.visitedPaths.shift();
-            if (possiblePath[1][0] === currentCell[0] && 
+            if (possiblePath[1][0] === currentCell[0] &&
                 possiblePath[1][1] === currentCell[1]) {
                     currentCell = possiblePath[0];
                     shortestPath.unshift(possiblePath[0]);

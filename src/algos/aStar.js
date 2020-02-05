@@ -18,7 +18,7 @@ const aStar = {
     search: function () {
         let currentNode,
             currentNodeNeighbors;
-    
+
         if (this.openHeap.itemCount > 0) {
             currentNode = this.openHeap.pop()
             currentNode.closed = true;
@@ -108,7 +108,6 @@ class GraphNode {
     }
 }
 
-
 // Lower F-costs have a HIGHER priority and are thusly organized higher in the tree
 class BinaryHeap {
     constructor(scoreFunction) {
@@ -163,7 +162,6 @@ class BinaryHeap {
 
                 // If there is a right child
                 if (rightChildIndex < this.itemCount) {
-                    
                     // If left child has a HIGHER f-cost than right child
                     if (this.scoreFunction(this.items[leftChildIndex], this.items[rightChildIndex]) < 0) {
                         swapIndex = rightChildIndex;
@@ -181,7 +179,7 @@ class BinaryHeap {
             } else {
                 // no more children, also in correct position
                 return;
-            }   
+            }
         }
     }
     sortUp(i) {

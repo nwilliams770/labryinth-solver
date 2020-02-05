@@ -2,7 +2,6 @@ import React from 'react';
 import linkedinLogo from '../../images/linkedin-logo.png';
 import githubLogo from '../../images/github-logo.png';
 
-
 const Contact = () => {
     return (
         <div id="contact">

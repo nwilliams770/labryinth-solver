@@ -25,12 +25,12 @@ export const MazeGenerator = {
         this.ctx.beginPath();
     },
     generateMazeModel: function (cellSelectionMethod) {
-        // starting X,Y 
-        let x = this._getRandomIndex(0, this.mazeConfig.width - 1), 
+        // starting X,Y
+        let x = this._getRandomIndex(0, this.mazeConfig.width - 1),
             y = this._getRandomIndex(0, this.mazeConfig.height - 1);
 
         this.mazeModel = this._createMap(this.mazeConfig.width, this.mazeConfig.height);
-        
+
         this._growTree(this.mazeModel, x, y, cellSelectionMethod);
 
         return this.mazeModel;
@@ -42,7 +42,7 @@ export const MazeGenerator = {
             for (let x = 0; x < mazeModel[y].length; x++) {
                 if (mazeModel[y][x] === 1) {
                     this.ctx.fillStyle = this.mazeConfig.pathColor;
-                    
+
                     this.ctx.fillRect(x/2 * (this.mazeConfig.pathWidth + this.mazeConfig.wall) + this.mazeConfig.wall, y/2 * (this.mazeConfig.pathWidth + this.mazeConfig.wall) + this.mazeConfig.wall, this.mazeConfig.pathWidth, this.mazeConfig.pathWidth);
                     // this.ctx.fillRect(x/2 * (this.mazeConfig.pathWidth + this.mazeConfig.wall) + this.mazeConfig.offset, y/2 * (this.mazeConfig.pathWidth + this.mazeConfig.wall) + this.mazeConfig.offset, this.mazeConfig.pathWidth, this.mazeConfig.pathWidth);
                 }
@@ -53,13 +53,12 @@ export const MazeGenerator = {
     // Redraws the maze under the assumption initialize has already been called e.g. we have a mazeConfig & ctx
     redrawMaze: function (newCellSelectionMethod) {
         this._clearCanvas();
-        // starting X,Y 
-        let x = this._getRandomIndex(0, this.mazeConfig.width - 1), 
+        // starting X,Y
+        let x = this._getRandomIndex(0, this.mazeConfig.width - 1),
             y = this._getRandomIndex(0, this.mazeConfig.height - 1),
             map = this._createMap(this.mazeConfig.width, this.mazeConfig.height);
         this._growTree(map, x, y, newCellSelectionMethod);
         return this.mazeModel;
-    
     },
     _growTree: function (mazeModel, startingX, startingY, cellSelectionMethod) {
         let activeCellStackX = [startingX],
@@ -110,13 +109,13 @@ export const MazeGenerator = {
           let dir = this.DIRECTIONS[i],
               nx = x + this.DX[dir],
               ny = y + this.DY[dir];
-      
+
             if (map[ny * 2] !== undefined &&
                 map[nx * 2] !== undefined &&
-                map[ny * 2][nx * 2] === 0) 
+                map[ny * 2][nx * 2] === 0)
             {
                 return this.DIRECTIONS[i];
-            };      
+            };
         };
           return false;
     },
@@ -149,7 +148,7 @@ export const MazeGenerator = {
         this.ctx.fillStyle = 'yellow';
         this.ctx.fillRect(this.mazeConfig.outerWall,0,this.mazeConfig.pathWidth,this.mazeConfig.outerWall);
         this.ctx.fillRect(this.mazeConfig.canvasWidth - this.mazeConfig.outerWall - this.mazeConfig.pathWidth,this.mazeConfig.canvasHeight - this.mazeConfig.outerWall,this.mazeConfig.pathWidth,this.mazeConfig.outerWall);
-        this.ctx.fillStyle = this.mazeConfig.wallColor; // Revert fillStyle for future redraws 
+        this.ctx.fillStyle = this.mazeConfig.wallColor; // Revert fillStyle for future redraws
     },
     _clearCanvas: function () {
         this.ctx.fillRect(0,0,this.mazeConfig.canvasWidth,this.mazeConfig.canvasHeight);
@@ -158,20 +157,20 @@ export const MazeGenerator = {
 // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
     _shuffle: function (array) {
         var currentIndex = array.length, temporaryValue, randomIndex;
-  
+
         // While there remain elements to shuffle...
         while (0 !== currentIndex) {
-      
+
           // Pick a remaining element...
           randomIndex = Math.floor(Math.random() * currentIndex);
           currentIndex -= 1;
-      
+
           // And swap it with the current element.
           temporaryValue = array[currentIndex];
           array[currentIndex] = array[randomIndex];
           array[randomIndex] = temporaryValue;
         }
-      
+
         return array;
     },
 // getRandomIntInclusive()
@@ -179,7 +178,7 @@ export const MazeGenerator = {
     _getRandomIndex: function (min, max) {
         min = Math.ceil(min);
         max = Math.floor(max);
-        return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive 
+        return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive
     },
 };
 

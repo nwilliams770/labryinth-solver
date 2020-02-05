@@ -2,10 +2,9 @@ import React, { useEffect, useState, useRef } from 'react';
 import sprite from '../../images/alaska.png';
 import MazeStore from '../../stores/maze-store';
 
-
 function getRandomArbitraryExlusive(min, max, exclusion) {
     let num = Math.floor(Math.random() * (max - min) + min);
- 
+
     while (num === exclusion) {
         num = Math.floor(Math.random() * (max - min) + min);
     };
@@ -15,10 +14,12 @@ function getRandomArbitraryExlusive(min, max, exclusion) {
 const speeches = [
     "I'll give you $10,000, via PayPal, if you get me out of this maze...",
     "You're not my real dad and you never will be, Maze Wizard scum!",
+    "When I'm good, I'm good but when I'm bad I blow up your planet.",
+    "I'm a businesswoman of the 80s who doesn't want romance without finance.",
     "Are you red...y for me, Maze Wizard?",
-    "Hieeeeeeeeeeeeeee",
-    "I know that Anus-thing is possible, but will I EVER get out of here?",
-    "I don't even know what a warp drive is...",
+    "Hieeeeeeeeeeeeeee!",
+    "Your makeup is terrible, Maze Wizard.",
+    "My name is yours, what's Alaska?",
     "Escaped at last! Time to accost this Maze Wizard and bring his bodacious treasures back to my people!"
 ];
 
@@ -181,7 +182,7 @@ const Alaska = () => {
             end = 0,
             animationList = list.map(obj => ({...obj}) ); // .shift() will modify our original array which we need to loop the animation
             //    same as   list.map(obj => Object.assign({}, a));
-    
+
         const step = () => {
             if (pauseRef.current) {
                 _requestAnimationFrame(step);
@@ -190,7 +191,7 @@ const Alaska = () => {
             }
             let current = Date.now(),
                 remaining = end - current;
-            
+
             if (remaining < 60) {
             // end animation here as less than 60ms left, which is our frame rate
                 if (item) item.run(1) // 1 = progress at 100%
@@ -206,7 +207,7 @@ const Alaska = () => {
                 }
             } else {
                 let rate = remaining/duration;
-                // Easing formula 
+                // Easing formula
                 // https://www.sitepoint.com/simple-animations-using-requestanimationframe/
                 rate = 1 - Math.pow(rate, 3);
                 // rate = 1 - rate;
@@ -231,8 +232,8 @@ const Alaska = () => {
         clearCurrentTimeout();
     };
 
-    const handleToggleSpeechEvent = function() { 
-        // If paused, it means maze was previously solved 
+    const handleToggleSpeechEvent = function() {
+        // If paused, it means maze was previously solved
         if (pauseRef.current) {
             if (speechVisibleRef.current) toggleSpeech(false);
             pauseAnimation(false);
@@ -247,8 +248,7 @@ const Alaska = () => {
         let totalAnimatiomTimeLoop = 0;
         animation.forEach(item => totalAnimatiomTimeLoop += item.time * 1000);
         totalAnimatiomTimeLoop += 4500; // 4.5s delay in-between animations
-    
-    
+
         const loop = () => {
             animate(animation);
             updateTimeoutId(setTimeout(loop, totalAnimatiomTimeLoop));
@@ -291,7 +291,7 @@ const Alaska = () => {
 const SpeechBubble = ({ currentSpeech, alaskaDirection, speechVisible }) => {
     return (
         // <div id="speech" style={{visibility: speechVisible ? 'visible' : 'hidden', transform: `scaleX(${alaskaDirection === "right" ? 1 : -1 }` }}>
-        <div id="speech" style={{visibility: speechVisible ? 'visible' : 'hidden'}}> 
+        <div id="speech" style={{visibility: speechVisible ? 'visible' : 'hidden'}}>
             <div className={"arrow " + (alaskaDirection === "right" ? "" : "inverted")}></div>
             <p>{currentSpeech}</p>
         </div>

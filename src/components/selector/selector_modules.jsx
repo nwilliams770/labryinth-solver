@@ -6,7 +6,6 @@ const SelectorModules = () => {
     const [mazeSelection, updateMazeSelection] = useState({value: "newest", label: "Newest"});
     const [algoSelection, updateAlgoSelection] = useState("");
 
-
     const mazeConfig = {
         options: [
             {value: "newest", label: "Newest"},
@@ -37,7 +36,6 @@ const SelectorModules = () => {
                     backgroundColor: '#d8e8fe'
                 }
             }),
-
             control: (provided, state) => ({
                 ...provided,
                 borderRadius: '0',
@@ -131,17 +129,16 @@ const SelectorModules = () => {
 
     return (
         <div id="selector-modules">
-            <SelectorModule 
+            <SelectorModule
                 config={algoConfig}
                 value={algoSelection}
             />
-            <SelectorModule 
+            <SelectorModule
                 config={mazeConfig}
                 value={mazeSelection}
                 styles={mazeConfig.styles}
             />
         </div>
-
     );
 };
 

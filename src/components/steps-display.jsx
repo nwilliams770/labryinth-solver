@@ -1,16 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import MazeStore from '../stores/maze-store';
 
-// Ok so what do we want this to do:
-//      - Display Steps with corresponding algo + running steps gif
-//      Actions
-//          - Run solver script:
-//              display steps?
-//          - Maze Generation change
-//              - wipe all previous steps
-//          - New algo choice while one running
-//              - reset steps of currently running
-
 const LabelKey = {
     tremaux: "trémaux",
     wallFollower: "wall follower",
@@ -72,6 +62,5 @@ const StepsDisplay = () => {
         </div>
     )
 }
-
 
 export default StepsDisplay;

@@ -7,7 +7,6 @@ import StepsDisplay from './steps-display';
 import WallDestroyButtons from './buttons/wall_destroy_buttons';
 import Footer from './footer/footer';
 
-
 const App = () => {
     return (
         <div id="app">

@@ -24,8 +24,8 @@ const wallFollower = {
         if (point) {
             this.walker.moveWithWall(point);
             this.rotateLeftNinety();
-        } 
-        
+        }
+
         // Move forward if possible
         point = this.canMoveForward(this.currentDirection);
         if (point) {
@@ -73,7 +73,7 @@ const wallFollower = {
             theta = this.currentDirection,
             relativeForwardTileVector = this.rotate(x, y, theta), // coordinates for the relative forward tile
             relativeForwardTile = {x: this.walker.x + relativeForwardTileVector[0], y: this.walker.y + relativeForwardTileVector[1]};
-            
+
             let result = (!this.walker.outOfBounds(relativeForwardTile) && this.walker.isOpen(relativeForwardTile)) ? relativeForwardTile : false;
             return result;
     },
@@ -91,14 +91,14 @@ const wallFollower = {
     rotate: function (x, y, theta) {
     // rotation matrix
     // https://en.wikipedia.org/wiki/Rotation_matrix
-    
+
         let matrix = [
                 [  Math.cos(theta), Math.sin(theta)],
                 [ -Math.sin(theta), Math.cos(theta)]
             ],
             x1 = (x * matrix[0][0]) + (y * matrix[0][1]),
             y1 = (x * matrix[1][0]) + (y * matrix[1][1]);
-        
+
         return [Math.round(x1), Math.round(y1)];
 
     },

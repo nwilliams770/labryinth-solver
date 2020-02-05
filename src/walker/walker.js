@@ -23,7 +23,7 @@ const WalkerManager = {
         this.ctx.strokeStyle = this.shadeMap[1];
         this.ctx.lineCap = "square";
         this.ctx.lineWidth = mazeConfig.pathWidth;
-        
+
         this.generateVistedTilesModel();
 
         // Set starting point
@@ -52,7 +52,7 @@ const WalkerManager = {
     draw: function(prevX, prevY, shade) {
         this.ctx.strokeStyle = shade;
         this.ctx.beginPath();
-        this.ctx.moveTo(prevX/2 * (this.mazeConfig.pathWidth + this.mazeConfig.wall) + this.mazeConfig.offset, 
+        this.ctx.moveTo(prevX/2 * (this.mazeConfig.pathWidth + this.mazeConfig.wall) + this.mazeConfig.offset,
                         prevY/2 * (this.mazeConfig.pathWidth + this.mazeConfig.wall) + this.mazeConfig.offset);
         this.ctx.lineTo(this.x/2 * (this.mazeConfig.pathWidth + this.mazeConfig.wall) + this.mazeConfig.offset,
                         this.y/2 * (this.mazeConfig.pathWidth + this.mazeConfig.wall) + this.mazeConfig.offset);
@@ -121,8 +121,8 @@ const WalkerManager = {
 
         for (let i = 0; i < 4; i++) {
             let neighbor = this._getXYForDirection(i);
-            if (neighbor.x >= 0 && 
-                neighbor.y >= 0 && 
+            if (neighbor.x >= 0 &&
+                neighbor.y >= 0 &&
                 this.isOpen(neighbor) &&
                 !this.visited[neighbor.y][neighbor.x].closed) {
                     result.push(this.visited[neighbor.y][neighbor.x]);
@@ -164,8 +164,8 @@ const WalkerManager = {
 
         for (let i = 0; i < 4; i++) {
             let neighbor = this._getXYForDirection(i);
-            if (neighbor.x >= 0 && 
-                neighbor.y >= 0 && 
+            if (neighbor.x >= 0 &&
+                neighbor.y >= 0 &&
                 this.isOpen(neighbor) &&
                 this.visited[neighbor.y][neighbor.x] === 0) {
                     neighbors.push(neighbor);
@@ -195,7 +195,7 @@ const WalkerManager = {
         ActionCreator.iterateSteps();
 
         // If we can find an open path at this point, set it to 1 so we can backtrack on it
-        // If we've found an open path while backtracking, 
+        // If we've found an open path while backtracking,
         if (this.findOpenPath(point.x, point.y)) {
             foundOpenPath = true;
             this.visited[point.y][point.x]--;
@@ -211,7 +211,7 @@ const WalkerManager = {
             prevY = this.y,
             point = this._getXYForDirection(direction);
 
-        if (this.outOfBounds(point) || !this.isOpen(point))  return movedToNewTile 
+        if (this.outOfBounds(point) || !this.isOpen(point))  return movedToNewTile
 
         if (backtrack) {
             // If we are backtracking, do not go to our current tile again, e.g. iterate it to 2
@@ -261,7 +261,7 @@ const WalkerManager = {
         this.generateVistedTilesModel();
     },
     _unvisited: function (point) {
-        return this.visited[point.y][point.x] === 0; 
+        return this.visited[point.y][point.x] === 0;
     },
     _canMoveWithTremaux: function(point) {
         return (!this.outOfBounds(point) && this.isOpen(point) && this.visited[point.y][point.x] < 2)
@@ -280,9 +280,9 @@ const WalkerManager = {
         return (this.outOfBounds(point) || this.visited[point.y][point.x] > 0)
     },
     outOfBounds: function(point) {
-        return (point.y < 0 || 
+        return (point.y < 0 ||
                 point.x < 0 ||
-                this.visited[point.y] === undefined || 
+                this.visited[point.y] === undefined ||
                 this.visited[point.y][point.x] === undefined)
     },
     // https://stackoverflow.com/questions/7348618/html5-canvas-clipping-by-color
@@ -292,10 +292,9 @@ const WalkerManager = {
 
         for (var i = 0, n = pix.length; i <n; i += 4) {
             if(pix[i] === color[0] && pix[i+1] === color[1] && pix[i+2] === color[2]){
-                pix[i+3] = 0;   
+                pix[i+3] = 0;
             }
         }
-
         this.ctx.putImageData(canvasData, 0, 0);
     },
     // method emulated from Primary Objects

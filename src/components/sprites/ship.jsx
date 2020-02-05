@@ -20,7 +20,7 @@ const Ship = (props) => {
     // we will only call the function ONCE!
     useEffect(() => {
         // const shipWidth = 70; // Our sprite is 100 x 100px but surrounded by a lot of white space, just estimating the actual size of the ship itself
-        const interval = setInterval(() => { 
+        const interval = setInterval(() => {
             if (xPosRef.current < window.innerWidth ) {
                 updatePos(xPosRef.current + 1)
             } else {
