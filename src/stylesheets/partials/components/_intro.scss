@@ -1,9 +1,9 @@
 #intro {
-    // background: url('../../../images/intro-bg.jpg') no-repeat center center fixed;
-    // -webkit-background-size: cover;
-    // -moz-background-size: cover;
-    // -o-background-size: cover;
-    // background-size: cover;
+    background: url('../../../images/intro-bg.jpg') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
     width: 100vw;
     height: 100vw;
     position: relative;
@@ -16,12 +16,6 @@
         -webkit-transform: translateX(-50%);
         transform: translateX(-50%);
     }
-
-    #intro-bg {
-        width: auto;
-        height: auto;
-    }
-      
     #hdr {
         width: 60%;
         margin: 5% auto 0 auto;
@@ -31,7 +25,6 @@
         -webkit-transform: translateX(-50%);
         transform: translateX(-50%);
     }
-      
     #sub-hdr {
         width: 40%;
         margin: 0 auto;
