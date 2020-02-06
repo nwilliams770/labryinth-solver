@@ -1,6 +1,8 @@
 # Alaska: Trial of the Maze Wizard
 + A NES-inspired visualization of various [maze solving algorithms](https://en.wikipedia.org/wiki/Maze_solving_algorithm) and the newest addition to Alaska's bodacious interplanetary adventures!
 
+See it [live](https://nwilliams770.github.io/labryinth-solver/)
+
 ![Preview image](./src/images/preview.png)
 
 ### Features
