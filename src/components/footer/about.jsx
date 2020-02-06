@@ -41,7 +41,7 @@ const PanelContent = ({ setOpenPanel }) => {
                     </div>
                     <div class="body">
                         <ul>
-                            <li class="point">Cannot alway solve multiply connected mazes.</li>
+                            <li class="point">Cannot always solve multiply-connected mazes.</li>
                             <li class="point">Not guaranteed to find the shortest path.</li>
                         </ul>
                     </div>
@@ -52,7 +52,7 @@ const PanelContent = ({ setOpenPanel }) => {
                     </div>
                     <div class="body">
                         <ul>
-                            <li class="point">Loren Ipsum</li>
+                            <li class="point">Indifferent to simply- and multiply-connected mazes.</li>
                             <li class="point">Guaranteed to find the shortest path.</li>
                         </ul>
                     </div>
@@ -63,7 +63,7 @@ const PanelContent = ({ setOpenPanel }) => {
                     </div>
                     <div class="body">
                         <ul>
-                            <li class="point">Loren Ipsum</li>
+                            <li class="point">Uses a heuristic that estimates minimum cost from a given location to the goal. This implementation employs Manhattan distance.</li>
                             <li class="point">Guaranteed to find the shortest path.</li>
                         </ul>
                     </div>
