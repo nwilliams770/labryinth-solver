@@ -17,7 +17,7 @@ const PanelContent = ({ setOpenPanel }) => {
                 <div class="intro">
                     <p class="copy">
                         Alaska: The Trial of the Maze Wizard is a visual exploration of various
-                        maze solving and graph traversal algorithms, in 8-bit goodness. <br/>
+                        maze solving and graph traversal algorithms, in pixelated goodness. <br/>
                         Built with React + HTML5 Canvas.
                     </p>
                 </div>
