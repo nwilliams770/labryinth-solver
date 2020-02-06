@@ -1,0 +1,28 @@
+{
+  "files": {
+    "main.css": "/labryinth-solver/static/css/main.6227a934.chunk.css",
+    "main.js": "/labryinth-solver/static/js/main.22ba8ab8.chunk.js",
+    "main.js.map": "/labryinth-solver/static/js/main.22ba8ab8.chunk.js.map",
+    "runtime~main.js": "/labryinth-solver/static/js/runtime~main.4f1d6ce7.js",
+    "runtime~main.js.map": "/labryinth-solver/static/js/runtime~main.4f1d6ce7.js.map",
+    "static/css/2.db1c57ae.chunk.css": "/labryinth-solver/static/css/2.db1c57ae.chunk.css",
+    "static/js/2.50c4a253.chunk.js": "/labryinth-solver/static/js/2.50c4a253.chunk.js",
+    "static/js/2.50c4a253.chunk.js.map": "/labryinth-solver/static/js/2.50c4a253.chunk.js.map",
+    "static/js/3.2f1fbbca.chunk.js": "/labryinth-solver/static/js/3.2f1fbbca.chunk.js",
+    "static/js/3.2f1fbbca.chunk.js.map": "/labryinth-solver/static/js/3.2f1fbbca.chunk.js.map",
+    "static/js/4.86e36ff8.chunk.js": "/labryinth-solver/static/js/4.86e36ff8.chunk.js",
+    "static/js/4.86e36ff8.chunk.js.map": "/labryinth-solver/static/js/4.86e36ff8.chunk.js.map",
+    "static/js/5.84b90880.chunk.js": "/labryinth-solver/static/js/5.84b90880.chunk.js",
+    "static/js/5.84b90880.chunk.js.map": "/labryinth-solver/static/js/5.84b90880.chunk.js.map",
+    "static/js/6.d1c82036.chunk.js": "/labryinth-solver/static/js/6.d1c82036.chunk.js",
+    "static/js/6.d1c82036.chunk.js.map": "/labryinth-solver/static/js/6.d1c82036.chunk.js.map",
+    "index.html": "/labryinth-solver/index.html",
+    "precache-manifest.8f948ef8065c9e38218b6f9411e9d538.js": "/labryinth-solver/precache-manifest.8f948ef8065c9e38218b6f9411e9d538.js",
+    "service-worker.js": "/labryinth-solver/service-worker.js",
+    "static/css/2.db1c57ae.chunk.css.map": "/labryinth-solver/static/css/2.db1c57ae.chunk.css.map",
+    "static/css/main.6227a934.chunk.css.map": "/labryinth-solver/static/css/main.6227a934.chunk.css.map",
+    "static/media/alaska-header.png": "/labryinth-solver/static/media/alaska-header.88535078.png",
+    "static/media/app.scss": "/labryinth-solver/static/media/main-bg.44872afa.jpg",
+    "static/media/sorcerer-sprite.png": "/labryinth-solver/static/media/sorcerer-sprite.3384e841.png"
+  }
+}
