@@ -145,7 +145,7 @@ export const MazeGenerator = {
     },
     _drawEntraceExit: function () {
         // Draw entrance/exit
-        this.ctx.fillStyle = 'yellow';
+        this.ctx.fillStyle = this.mazeConfig.entranceExitColor;
         this.ctx.fillRect(this.mazeConfig.outerWall,0,this.mazeConfig.pathWidth,this.mazeConfig.outerWall);
         this.ctx.fillRect(this.mazeConfig.canvasWidth - this.mazeConfig.outerWall - this.mazeConfig.pathWidth,this.mazeConfig.canvasHeight - this.mazeConfig.outerWall,this.mazeConfig.pathWidth,this.mazeConfig.outerWall);
         this.ctx.fillStyle = this.mazeConfig.wallColor; // Revert fillStyle for future redraws

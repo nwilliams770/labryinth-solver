@@ -13,12 +13,27 @@ const WalkerManager = {
         this.xStack = [];
         this.yStack = [];
         this.stackSize = 0;
+        // Hot Pink
+        // this.shadeMap = {
+        //     1: "#fb50a6",
+        //     2: "#c94085",
+        //     3: "#973064",
+        //     4: "#642042"
+        // };
+        // Peach
         this.shadeMap = {
-            1: "#fb50a6",
-            2: "#c94085",
-            3: "#973064",
-            4: "#642042"
-        };
+            1: "#ff928b",
+            2: "#e6837d",
+            3: "#cc756f",
+            4: "#b36661"
+        }
+        // Coral Pink
+        // this.shadeMap = {
+        //     1: "#ea638c",
+        //     2: "#d3597e",
+        //     3: "#bb4f70",
+        //     4: "#a44562"
+        // }
 
         this.ctx.strokeStyle = this.shadeMap[1];
         this.ctx.lineCap = "square";

@@ -16,6 +16,7 @@ let mazeConfig = {
     start: 0,
     wallColor: '#d24',
     pathColor: '#222a33',
+    entranceExitColor: '#E3C567',
     maze: [],
 }
 mazeConfig.canvasWidth = mazeConfig.outerWall * 2 + (mazeConfig.width * (mazeConfig.pathWidth + mazeConfig.wall)) - mazeConfig.wall;
